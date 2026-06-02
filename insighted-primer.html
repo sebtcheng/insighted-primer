@@ -45,6 +45,18 @@
             display: flex;
         }
 
+        .mobile-header {
+            display: none;
+        }
+
+        .mobile-menu-toggle {
+            display: none;
+        }
+
+        .mobile-nav-overlay {
+            display: none;
+        }
+
         #sidebar {
             width: var(--sidebar-width);
             height: 100vh;
@@ -971,14 +983,118 @@
         @media (max-width: 760px) {
             body {
                 display: block;
+                overflow-x: hidden;
+            }
+
+            body.mobile-nav-open {
+                overflow: hidden;
+            }
+
+            .mobile-header {
+                position: sticky;
+                top: 0;
+                z-index: 60;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 0.75rem;
+                min-height: 64px;
+                padding: 0.7rem 1rem;
+                background: rgba(255, 255, 255, 0.94);
+                border-bottom: 1px solid rgba(226, 232, 240, 0.95);
+                box-shadow: 0 12px 28px rgba(15, 23, 42, 0.08);
+                backdrop-filter: blur(18px);
+            }
+
+            .mobile-header-brand {
+                display: flex;
+                align-items: center;
+                gap: 0.65rem;
+                min-width: 0;
+                color: var(--primary);
+                font-weight: 950;
+                letter-spacing: -0.03em;
+            }
+
+            .mobile-header-logo {
+                width: 40px;
+                height: 40px;
+                object-fit: contain;
+                flex: 0 0 auto;
+            }
+
+            .mobile-header-title {
+                display: block;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                font-size: 1rem;
+            }
+
+            .mobile-menu-toggle {
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                width: 44px;
+                height: 44px;
+                flex: 0 0 auto;
+                border: 1px solid #bfdbfe;
+                border-radius: 14px;
+                background: linear-gradient(135deg, #dbeafe, #eff6ff);
+                color: var(--primary);
+                font-size: 1.35rem;
+                font-weight: 950;
+                cursor: pointer;
+                box-shadow: 0 10px 22px rgba(37, 99, 235, 0.14);
+            }
+
+            .mobile-menu-toggle .menu-close {
+                display: none;
+            }
+
+            body.mobile-nav-open .mobile-menu-toggle .menu-open {
+                display: none;
+            }
+
+            body.mobile-nav-open .mobile-menu-toggle .menu-close {
+                display: inline;
+            }
+
+            .mobile-nav-overlay {
+                position: fixed;
+                inset: 64px 0 0;
+                z-index: 40;
+                display: block;
+                background: rgba(15, 23, 42, 0.42);
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.2s ease;
+            }
+
+            body.mobile-nav-open .mobile-nav-overlay {
+                opacity: 1;
+                pointer-events: auto;
             }
 
             #sidebar {
-                position: relative;
-                width: 100%;
-                height: auto;
-                border-right: 0;
-                border-bottom: 1px solid var(--line);
+                position: fixed;
+                inset: 64px auto 0 0;
+                width: min(86vw, 340px);
+                height: calc(100vh - 64px);
+                border-right: 1px solid rgba(148, 163, 184, 0.24);
+                border-bottom: 0;
+                transform: translateX(-105%);
+                transition: transform 0.24s ease;
+                z-index: 50;
+                padding-bottom: 1rem;
+            }
+
+            body.mobile-nav-open #sidebar {
+                transform: translateX(0);
+            }
+
+            #sidebar .brand {
+                display: none;
             }
 
             #sidebar-resizer {
@@ -992,11 +1108,40 @@
             }
 
             .hero {
-                padding: 1.5rem;
+                padding: 1.35rem;
+                border-radius: 22px;
             }
 
-            .hero-grid, .card-grid, .card-grid.two, .module-list, .roadmap, .flow {
+            h1 {
+                font-size: clamp(2rem, 13vw, 3.2rem);
+            }
+
+            .hero p,
+            .section-lead {
+                font-size: 0.95rem;
+            }
+
+            .hero-grid, .card-grid, .card-grid.two, .module-list, .roadmap, .flow, .dictionary-summary, .tech-stack-grid, .stack-summary {
                 grid-template-columns: 1fr;
+            }
+
+            .tech-card.full-row {
+                grid-column: auto;
+            }
+
+            table {
+                display: block;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                border-radius: 16px;
+            }
+
+            th, td {
+                min-width: 180px;
+            }
+
+            .element-list {
+                columns: 1;
             }
 
             .flow-step,
@@ -1017,6 +1162,18 @@
     </style>
 </head>
 <body>
+    <header class="mobile-header">
+        <div class="mobile-header-brand">
+            <img class="mobile-header-logo" src="https://raw.githubusercontent.com/sebtcheng/insighted-images/main/InsightED_logo_5_x_3_in.png" alt="InsightED logo">
+            <span class="mobile-header-title">InsightED Guide</span>
+        </div>
+        <button id="mobile-menu-toggle" class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+            <span class="menu-open">☰</span>
+            <span class="menu-close">×</span>
+        </button>
+    </header>
+    <div id="mobile-nav-overlay" class="mobile-nav-overlay" aria-hidden="true"></div>
+
     <nav id="sidebar">
         <div class="brand">
             <div class="brand-mark">
@@ -1753,7 +1910,7 @@
             },
             schoolProfile: {
                 eyebrow: "Data Elements",
-                title: "School Profile data elements for School Head records.",
+                title: "<span class=\"title-red\">School Profile</span> data elements for School Head records.",
                 description:
                     "This view explains the main information collected from School Head records, including school identity, learners, classes, resources, facilities, location, safety, and completion progress.",
                 stats: [
@@ -1765,7 +1922,7 @@
             },
             infrastructure: {
                 eyebrow: "Data Elements",
-                title: "Infrastructure data elements for Division Engineer records.",
+                title: "<span class=\"title-red\">Infrastructure</span> data elements for Division Engineer records.",
                 description:
                     "This view explains the main information collected for infrastructure monitoring, including project details, photo evidence, uploaded documents, engineer accounts, and update history.",
                 stats: [
@@ -1822,7 +1979,52 @@
             if (activePanel) activePanel.classList.add("active");
 
             updateHero(viewId);
+            document.body.classList.remove("mobile-nav-open");
+            const mobileToggle = document.getElementById("mobile-menu-toggle");
+            if (mobileToggle) {
+                mobileToggle.setAttribute("aria-expanded", "false");
+                mobileToggle.setAttribute("aria-label", "Open navigation");
+            }
             window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function initializeMobileHeader() {
+            const toggle = document.getElementById("mobile-menu-toggle");
+            const overlay = document.getElementById("mobile-nav-overlay");
+            const closeNav = () => {
+                document.body.classList.remove("mobile-nav-open");
+                if (toggle) {
+                    toggle.setAttribute("aria-expanded", "false");
+                    toggle.setAttribute("aria-label", "Open navigation");
+                }
+            };
+            const openNav = () => {
+                document.body.classList.add("mobile-nav-open");
+                if (toggle) {
+                    toggle.setAttribute("aria-expanded", "true");
+                    toggle.setAttribute("aria-label", "Close navigation");
+                }
+            };
+
+            if (toggle) {
+                toggle.addEventListener("click", () => {
+                    if (document.body.classList.contains("mobile-nav-open")) {
+                        closeNav();
+                    } else {
+                        openNav();
+                    }
+                });
+            }
+
+            if (overlay) overlay.addEventListener("click", closeNav);
+
+            window.addEventListener("keydown", (event) => {
+                if (event.key === "Escape") closeNav();
+            });
+
+            window.addEventListener("resize", () => {
+                if (window.innerWidth > 760) closeNav();
+            });
         }
 
         function initializeSidebarResize() {
@@ -1858,6 +2060,7 @@
             });
         }
 
+        initializeMobileHeader();
         initializeSidebarResize();
         updateHero("overview");
     </script>

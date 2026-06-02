@@ -1,0 +1,1865 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightED Ecosystem Guide</title>
+    <style>
+        :root {
+            --primary: #1e3a8a;
+            --primary-2: #2563eb;
+            --secondary: #0284c7;
+            --accent: #f59e0b;
+            --green: #16a34a;
+            --purple: #7c3aed;
+            --rose: #e11d48;
+            --bg: #f8fafc;
+            --panel: #ffffff;
+            --muted-panel: #eef6ff;
+            --text: #0f172a;
+            --muted: #475569;
+            --line: #e2e8f0;
+            --sidebar-width: 300px;
+            --sidebar-min-width: 240px;
+            --sidebar-max-width: 420px;
+            --radius: 18px;
+            --shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #eef6ff 48%, #fefce8 100%);
+            color: var(--text);
+            line-height: 1.65;
+            min-height: 100vh;
+            display: flex;
+        }
+
+        #sidebar {
+            width: var(--sidebar-width);
+            height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(37, 99, 235, 0.10), transparent 34%),
+                linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.96));
+            border-right: 1px solid rgba(148, 163, 184, 0.24);
+            position: fixed;
+            inset: 0 auto 0 0;
+            overflow-y: auto;
+            padding: 0.35rem 0.35rem 0.6rem;
+            z-index: 20;
+            backdrop-filter: blur(18px);
+            box-shadow: 18px 0 40px rgba(15, 23, 42, 0.05);
+        }
+
+        #sidebar-resizer {
+            position: fixed;
+            top: 0;
+            left: calc(var(--sidebar-width) - 4px);
+            width: 8px;
+            height: 100vh;
+            cursor: col-resize;
+            z-index: 30;
+            background: transparent;
+            transition: background 0.2s ease;
+        }
+
+        #sidebar-resizer:hover,
+        body.resizing-sidebar #sidebar-resizer {
+            background: rgba(37, 99, 235, 0.16);
+        }
+
+        body.resizing-sidebar {
+            cursor: col-resize;
+            user-select: none;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            margin-bottom: -2.35rem;
+            background: transparent;
+            border: 0;
+            box-shadow: none;
+        }
+
+        .brand-mark {
+            width: 100%;
+            height: 184px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            overflow: visible;
+        }
+
+        .brand-logo {
+            width: min(200%, 460px);
+            max-width: none;
+            height: 100%;
+            object-fit: contain;
+            object-position: center center;
+            padding: 0;
+            display: block;
+        }
+
+        .brand-title {
+            font-size: 1.1rem;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: -0.03em;
+        }
+
+        .brand-subtitle {
+            font-size: 0.74rem;
+            color: var(--muted);
+            line-height: 1.25;
+            margin-top: 0.1rem;
+        }
+
+        .nav-card {
+            padding: 0.75rem;
+            border-radius: 22px;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid rgba(226, 232, 240, 0.95);
+            box-shadow: 0 12px 28px rgba(15, 23, 42, 0.04);
+        }
+
+        .toggle-label {
+            display: flex;
+            align-items: center;
+            gap: 0.45rem;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #64748b;
+            margin: 0 0 0.7rem;
+            font-weight: 900;
+        }
+
+        .data-dictionary-label {
+            margin-top: 1rem;
+        }
+
+        .sidebar-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 0.78rem 0.85rem;
+            margin-bottom: 0.55rem;
+            border: 1px solid transparent;
+            border-radius: 16px;
+            background: transparent;
+            color: #334155;
+            text-align: left;
+            font-weight: 750;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .sidebar-btn:last-child {
+            margin-bottom: 0;
+        }
+
+        .sidebar-btn::before {
+            content: "";
+            position: absolute;
+            left: -0.75rem;
+            top: 50%;
+            width: 4px;
+            height: 0;
+            border-radius: 999px;
+            background: var(--primary-2);
+            transform: translateY(-50%);
+            transition: 0.2s ease;
+        }
+
+        .sidebar-btn:hover {
+            background: #f8fafc;
+            color: var(--primary-2);
+            transform: translateX(3px);
+            border-color: #e0edff;
+        }
+
+        .sidebar-btn.active {
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            color: var(--primary);
+            border-color: #bfdbfe;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.14);
+        }
+
+        .sidebar-btn.active::before {
+            height: 62%;
+        }
+
+        .sidebar-btn.disabled {
+            cursor: not-allowed;
+            opacity: 0.62;
+            pointer-events: none;
+            background: #f8fafc;
+            border-color: #e2e8f0;
+            transform: none;
+        }
+
+        .sidebar-btn.disabled .nav-icon {
+            background: #f1f5f9;
+            color: #94a3b8;
+            box-shadow: inset 0 0 0 1px #e2e8f0;
+        }
+
+        .nav-icon {
+            width: 34px;
+            height: 34px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 12px;
+            background: #eff6ff;
+            color: var(--primary);
+            font-size: 1rem;
+            box-shadow: inset 0 0 0 1px #dbeafe;
+        }
+
+        .sidebar-btn.active .nav-icon {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+        }
+
+        .nav-text {
+            display: block;
+            min-width: 0;
+        }
+
+        .nav-title {
+            display: block;
+            font-size: 0.88rem;
+            line-height: 1.15;
+        }
+
+        .nav-subtitle {
+            display: block;
+            margin-top: 0.15rem;
+            color: #64748b;
+            font-size: 0.7rem;
+            line-height: 1.2;
+            font-weight: 650;
+        }
+
+        .sidebar-status {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 20px;
+            background: linear-gradient(135deg, #f8fafc, #fff7ed);
+            border: 1px solid #e2e8f0;
+            color: var(--muted);
+            font-size: 0.78rem;
+            box-shadow: 0 12px 26px rgba(15, 23, 42, 0.04);
+        }
+
+        .status-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.55rem;
+            padding: 0.55rem 0;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.9);
+        }
+
+        .status-row:last-child {
+            border-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .status-row:first-child {
+            padding-top: 0;
+        }
+
+        .status-row strong {
+            display: block;
+            color: #0f172a;
+            font-size: 0.76rem;
+            line-height: 1.15;
+        }
+
+        .status-row span {
+            display: block;
+            line-height: 1.3;
+            margin-top: 0.1rem;
+        }
+
+        #main-content {
+            margin-left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            padding: 2.5rem 4rem 4rem;
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(37, 99, 235, 0.15);
+            border-radius: 28px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            background:
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.22), transparent 32%),
+                radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.18), transparent 28%),
+                linear-gradient(135deg, #ffffff 0%, #eff6ff 100%);
+            box-shadow: var(--shadow);
+        }
+
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: #dbeafe;
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: clamp(2.35rem, 6vw, 4.6rem);
+            line-height: 0.95;
+            letter-spacing: -0.06em;
+            color: var(--primary);
+            max-width: 900px;
+            margin-bottom: 1rem;
+        }
+
+        .title-red {
+            color: #dc2626;
+        }
+
+        .hero p {
+            max-width: 920px;
+            color: #334155;
+            font-size: 1.08rem;
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 1rem;
+            margin-top: 1.75rem;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.78);
+            border: 1px solid var(--line);
+            border-radius: 1rem;
+            padding: 1rem;
+            min-width: 0;
+        }
+
+        .stat-card strong {
+            display: block;
+            font-size: 1.55rem;
+            color: var(--primary);
+            line-height: 1;
+        }
+
+        .stat-card span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.83rem;
+            margin-top: 0.35rem;
+        }
+
+        .section-panel {
+            display: none;
+            animation: fadeIn 0.28s ease forwards;
+        }
+
+        .section-panel.active {
+            display: block;
+        }
+
+        section h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            line-height: 1.1;
+            color: var(--primary);
+            letter-spacing: -0.04em;
+            margin: 0 0 0.8rem;
+        }
+
+        section h3 {
+            color: #075985;
+            font-size: 1.1rem;
+            margin: 1.5rem 0 0.7rem;
+        }
+
+        .section-lead {
+            color: var(--muted);
+            max-width: 920px;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0 2rem;
+        }
+
+        .card-grid.two {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+            background: var(--panel);
+            border: 1px solid var(--line);
+            border-radius: var(--radius);
+            padding: 1.15rem;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+        }
+
+        .card .icon {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: #dbeafe;
+            color: var(--primary);
+            font-size: 1.35rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .card h3 {
+            color: var(--text);
+            margin: 0 0 0.4rem;
+            font-size: 1rem;
+        }
+
+        .card p,
+        .card ul {
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        .card ul {
+            padding-left: 1.1rem;
+            margin-top: 0.35rem;
+        }
+
+        .card li {
+            margin-bottom: 0.35rem;
+        }
+
+        .card li:last-child {
+            margin-bottom: 0;
+        }
+
+        .module-group {
+            background: rgba(255, 255, 255, 0.86);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 12px 32px rgba(15, 23, 42, 0.05);
+        }
+
+        .module-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .module-number {
+            width: 38px;
+            height: 38px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: var(--primary);
+            color: white;
+            font-weight: 900;
+        }
+
+        .module-header h3 {
+            margin: 0 0 0.2rem;
+            color: var(--primary);
+        }
+
+        .module-header p {
+            color: var(--muted);
+            font-size: 0.94rem;
+        }
+
+        .module-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.75rem;
+        }
+
+        .module-item {
+            background: #f8fafc;
+            border: 1px solid #e5edf6;
+            border-radius: 14px;
+            padding: 0.9rem;
+        }
+
+        .module-item strong {
+            display: block;
+            color: #0f172a;
+            margin-bottom: 0.25rem;
+        }
+
+        .module-item span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.88rem;
+        }
+
+        .pill-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+            margin-top: 1rem;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.35rem 0.7rem;
+            border-radius: 999px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            font-size: 0.82rem;
+            font-weight: 750;
+        }
+
+        .stack-summary {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 1rem;
+            margin: 1.5rem 0 1.25rem;
+            align-items: stretch;
+        }
+
+        .stack-summary-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 22px;
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            background:
+                radial-gradient(circle at top right, rgba(37, 99, 235, 0.12), transparent 34%),
+                linear-gradient(135deg, #ffffff, #eff6ff);
+            padding: 1.25rem;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+        }
+
+        .stack-summary-card strong {
+            display: block;
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 0.35rem;
+        }
+
+        .stack-summary-card span {
+            color: var(--muted);
+            font-size: 0.93rem;
+        }
+
+        .tech-stack-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0 2rem;
+        }
+
+        .tech-card {
+            background: rgba(255, 255, 255, 0.94);
+            border: 1px solid var(--line);
+            border-radius: 22px;
+            padding: 1.1rem;
+            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.06);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .tech-card.full-row {
+            grid-column: 1 / -1;
+        }
+
+        .tech-card-header {
+            display: flex;
+            gap: 0.85rem;
+            align-items: flex-start;
+        }
+
+        .tech-icon {
+            width: 48px;
+            height: 48px;
+            flex: 0 0 auto;
+            display: grid;
+            place-items: center;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #dbeafe, #fef3c7);
+            color: var(--primary);
+            font-size: 1.45rem;
+        }
+
+        .tech-card h3 {
+            margin: 0 0 0.25rem;
+            color: #0f172a;
+            font-size: 1.08rem;
+            line-height: 1.25;
+        }
+
+        .tech-card .tech-subtitle {
+            color: var(--muted);
+            font-size: 0.88rem;
+            line-height: 1.45;
+        }
+
+        .reason-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+        }
+
+        .reason-block {
+            background: linear-gradient(135deg, #f8fafc, #eff6ff);
+            border: 1px solid #dbeafe;
+            border-radius: 16px;
+            padding: 0.95rem;
+        }
+
+        .reason-block strong {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--primary);
+            font-size: 0.82rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.35rem;
+        }
+
+        .reason-block p {
+            color: #334155;
+            font-size: 0.9rem;
+            line-height: 1.55;
+        }
+
+        .stack-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: auto;
+        }
+
+        .stack-tag {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.32rem 0.68rem;
+            border-radius: 999px;
+            background: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            font-size: 0.8rem;
+            font-weight: 800;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 10px 28px rgba(15, 23, 42, 0.05);
+            margin: 1.25rem 0 2rem;
+        }
+
+        th, td {
+            padding: 0.95rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--line);
+            vertical-align: top;
+        }
+
+        th {
+            background: #eff6ff;
+            color: var(--primary);
+            font-weight: 850;
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .flow {
+            position: relative;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1.25rem 1.35rem;
+            margin: 1.5rem 0 2.5rem;
+            align-items: stretch;
+        }
+
+        .flow::before {
+            display: none;
+        }
+
+        .flow-step {
+            position: relative;
+            z-index: 1;
+            padding: 1.25rem 1.15rem 1.3rem;
+            border-radius: 22px;
+            background:
+                radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 36%),
+                linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            text-align: left;
+            box-shadow: 0 16px 32px rgba(15, 23, 42, 0.07);
+            display: grid;
+            grid-template-columns: auto 1fr;
+            grid-template-areas:
+                "icon title"
+                "icon text";
+            align-items: center;
+            column-gap: 0.9rem;
+            row-gap: 0.2rem;
+            min-height: 150px;
+        }
+
+        .flow-step:nth-child(5) {
+            grid-column: 1 / -1;
+            width: calc(50% - 0.68rem);
+            justify-self: center;
+        }
+
+        .flow-step::after {
+            content: "→";
+            position: absolute;
+            right: -0.88rem;
+            top: 50%;
+            width: 1.7rem;
+            height: 1.7rem;
+            border-radius: 999px;
+            display: grid;
+            place-items: center;
+            background: #dbeafe;
+            color: var(--primary);
+            border: 1px solid #bfdbfe;
+            font-weight: 900;
+            transform: translateY(-50%);
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.18);
+        }
+
+        .flow-step:nth-child(2)::after {
+            content: "↓";
+            right: 50%;
+            top: auto;
+            bottom: -1.45rem;
+            transform: translateX(50%);
+        }
+
+        .flow-step:nth-child(4)::after {
+            content: "↙";
+            display: grid;
+            right: auto;
+            left: 50%;
+            top: auto;
+            bottom: -1.45rem;
+            transform: translateX(-50%);
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .flow-icon {
+            grid-area: icon;
+            width: 58px;
+            height: 58px;
+            border-radius: 18px;
+            display: grid;
+            place-items: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            font-size: 1.5rem;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.24);
+        }
+
+        .flow-step strong {
+            grid-area: title;
+            display: block;
+            color: var(--primary);
+            font-size: 1.08rem;
+            line-height: 1.2;
+        }
+
+        .flow-step span {
+            grid-area: text;
+            color: var(--muted);
+            font-size: 0.93rem;
+            line-height: 1.5;
+        }
+
+        .callout {
+            border-left: 5px solid var(--accent);
+            background: #fffbeb;
+            border-radius: 0 18px 18px 0;
+            padding: 1rem 1.15rem;
+            color: #78350f;
+            margin: 1.25rem 0;
+        }
+
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 1rem;
+        }
+
+        .roadmap-card {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at top right, rgba(37, 99, 235, 0.10), transparent 34%),
+                #ffffff;
+            border: 1px solid rgba(37, 99, 235, 0.16);
+            border-radius: 22px;
+            padding: 1.15rem;
+            box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+        }
+
+        .roadmap-card h3 {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            margin: 0 0 0.9rem;
+            color: var(--primary);
+            line-height: 1.25;
+        }
+
+        .year-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 74px;
+            padding: 0.45rem 0.65rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: white;
+            font-size: 1rem;
+            font-weight: 950;
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.22);
+        }
+
+        .roadmap-title {
+            font-size: 1rem;
+            font-weight: 850;
+            color: #0f172a;
+        }
+
+        .roadmap-card ul {
+            padding-left: 1.1rem;
+            color: var(--muted);
+            font-size: 0.92rem;
+        }
+
+        .dictionary-summary {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 1rem;
+            margin: 1.25rem 0 2rem;
+        }
+
+        .dictionary-table td:first-child {
+            font-weight: 850;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        .element-list {
+            columns: 2;
+            column-gap: 1.4rem;
+            margin: 0;
+            padding-left: 1.05rem;
+            color: #0f172a;
+            font-size: 0.78rem;
+            line-height: 1.35;
+        }
+
+        .element-list li {
+            break-inside: avoid;
+            margin-bottom: 0.18rem;
+        }
+
+        .element-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .under-development {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.9rem;
+            min-height: 360px;
+            border: 1px solid rgba(191, 219, 254, 0.9);
+            border-radius: 28px;
+            background:
+                radial-gradient(circle at top right, rgba(14, 165, 233, 0.16), transparent 34%),
+                radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.12), transparent 30%),
+                linear-gradient(135deg, rgba(255, 255, 255, 0.96), rgba(239, 246, 255, 0.88));
+            color: var(--primary);
+            font-size: clamp(1.7rem, 4vw, 2.8rem);
+            font-weight: 950;
+            letter-spacing: -0.04em;
+            box-shadow: var(--shadow);
+        }
+
+        .under-development-icon {
+            width: 72px;
+            height: 72px;
+            display: grid;
+            place-items: center;
+            border-radius: 24px;
+            background: linear-gradient(135deg, #dbeafe, #fef3c7);
+            border: 1px solid #bfdbfe;
+            font-size: 2.1rem;
+            box-shadow: 0 14px 30px rgba(37, 99, 235, 0.14);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 1100px) {
+            .card-grid, .card-grid.two, .module-list, .roadmap {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .flow {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .flow-step {
+                min-height: 150px;
+            }
+        }
+
+        @media (max-width: 760px) {
+            body {
+                display: block;
+            }
+
+            #sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                border-right: 0;
+                border-bottom: 1px solid var(--line);
+            }
+
+            #sidebar-resizer {
+                display: none;
+            }
+
+            #main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 1.5rem;
+            }
+
+            .hero-grid, .card-grid, .card-grid.two, .module-list, .roadmap, .flow {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-step,
+            .flow-step:nth-child(5) {
+                width: 100%;
+                grid-column: auto;
+            }
+
+            .flow-step::after {
+                display: none;
+            }
+
+            .roadmap-card h3 {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav id="sidebar">
+        <div class="brand">
+            <div class="brand-mark">
+                <img class="brand-logo" src="https://raw.githubusercontent.com/sebtcheng/insighted-images/main/InsightED_logo_5_x_3_in.png" alt="InsightED logo">
+            </div>
+        </div>
+
+        <div class="nav-card">
+            <span class="toggle-label">Explore guide</span>
+            <button class="sidebar-btn active" onclick="switchView('overview')">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">
+                    <span class="nav-title">Ecosystem Overview</span>
+                    <span class="nav-subtitle">What InsightED connects</span>
+                </span>
+            </button>
+            <button class="sidebar-btn" onclick="switchView('modules')">
+                <span class="nav-icon">🧩</span>
+                <span class="nav-text">
+                    <span class="nav-title">Modules</span>
+                    <span class="nav-subtitle">Core platform areas</span>
+                </span>
+            </button>
+            <button class="sidebar-btn" onclick="switchView('stack')">
+                <span class="nav-icon">⚙️</span>
+                <span class="nav-text">
+                    <span class="nav-title">Technology Stack</span>
+                    <span class="nav-subtitle">Tools behind the platform</span>
+                </span>
+            </button>
+            <button class="sidebar-btn" onclick="switchView('stride')">
+                <span class="nav-icon">🧭</span>
+                <span class="nav-text">
+                    <span class="nav-title">STRIDE & Roadmap</span>
+                    <span class="nav-subtitle">From capture to decisions</span>
+                </span>
+            </button>
+            <span class="toggle-label data-dictionary-label">Data Elements</span>
+            <button class="sidebar-btn" onclick="switchView('schoolProfile')">
+                <span class="nav-icon">🏫</span>
+                <span class="nav-text">
+                    <span class="nav-title">School Profile</span>
+                    <span class="nav-subtitle">School Head data elements</span>
+                </span>
+            </button>
+            <button class="sidebar-btn" onclick="switchView('infrastructure')">
+                <span class="nav-icon">🏗️</span>
+                <span class="nav-text">
+                    <span class="nav-title">Infrastructure</span>
+                    <span class="nav-subtitle">Infra data elements</span>
+                </span>
+            </button>
+            <button class="sidebar-btn disabled" disabled aria-disabled="true">
+                <span class="nav-icon">📋</span>
+                <span class="nav-text">
+                    <span class="nav-title">Electronic School Form 7</span>
+                    <span class="nav-subtitle">Under development</span>
+                </span>
+            </button>
+            <button class="sidebar-btn disabled" disabled aria-disabled="true">
+                <span class="nav-icon">🧾</span>
+                <span class="nav-text">
+                    <span class="nav-title">NOSCA Issuance Tracker</span>
+                    <span class="nav-subtitle">Under development</span>
+                </span>
+            </button>
+            <button class="sidebar-btn disabled" disabled aria-disabled="true">
+                <span class="nav-icon">💸</span>
+                <span class="nav-text">
+                    <span class="nav-title">SIIF</span>
+                    <span class="nav-subtitle">Under development</span>
+                </span>
+            </button>
+        </div>
+
+        <div id="sidebar-resizer" aria-label="Resize sidebar" role="separator"></div>
+    </nav>
+
+    <main id="main-content">
+        <header class="hero" id="hero">
+            <div class="eyebrow" id="hero-eyebrow">Field-to-dashboard operating system</div>
+            <h1 id="hero-title"><br><br>Insight<span class="title-red">ED</span> as a <span class="title-red">centralized</span> data collection platform</h1>
+            <p id="hero-description">
+                InsightED is a mobile-first ecosystem for collecting, validating, monitoring, and analyzing school, infrastructure,
+                personnel, finance, SIIF, and support data. It connects school heads, engineers, division offices, regional offices,
+                central office units, finance users, and support teams through role-specific portals and STRIDE-style decision dashboards.
+            </p>
+        </header>
+
+        <section id="panel-overview" class="section-panel active">
+            <div class="card-grid">
+                <div class="card">
+                    <div class="icon">🏫</div>
+                    <h3>School-Level Capture</h3>
+                    <ul>
+                        <li>Captures school profile, learners, classes, resources, facilities, location, and infrastructure needs.</li>
+                        <li>Supports school heads working in low-connectivity field conditions.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">🏗️</div>
+                    <h3>Infrastructure Monitoring</h3>
+                    <ul>
+                        <li>Tracks infrastructure projects from creation to completion.</li>
+                        <li>Organizes inspections, photos, damage reports, donated projects, and progress updates.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">📍</div>
+                    <h3>RO/SDO Oversight</h3>
+                    <ul>
+                        <li>Helps regional and division offices supervise schools under their jurisdiction.</li>
+                        <li>Supports SIIF review, ESF7 validation, audits, user access, and location management.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">🏛️</div>
+                    <h3>Central-Office Analytics</h3>
+                    <ul>
+                        <li>Shows national-level summaries and program dashboards for Central Office teams.</li>
+                        <li>Connects class-size analysis, school head records, personnel registries, finance views, and facilities monitoring.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">💸</div>
+                    <h3>SIIF and Finance Visibility</h3>
+                    <ul>
+                        <li>Connects school plan submissions to allocation, budget, appropriation, and utilization.</li>
+                        <li>Helps RO and SDO users identify schools that need review or follow-up.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <div class="icon">🛟</div>
+                    <h3>Support Ticketing</h3>
+                    <ul>
+                        <li>Gives users a structured way to report issues and request help.</li>
+                        <li>Helps support teams review attachments, update ticket status, triage concerns, and track resolved cases.</li>
+                    </ul>
+                </div>
+            </div>
+
+            
+
+            <div class="callout">
+                <strong>Positioning:</strong> InsightED’s value is not only digitizing forms. Its value is turning verified field records into operational intelligence for school, division, regional, and national decision-making.
+            </div>
+        </section>
+
+        <section id="panel-modules" class="section-panel">
+            <h2>Modules Being Built</h2>
+            <p class="section-lead">
+                InsightED is organized into core module families that support data capture, validation, monitoring, analytics, and support operations across the platform.
+            </p>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🧭</div>
+                    <div>
+                        <h3>Nexus and Role-Based Entry</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This is the front door of InsightED. It detects or lets users choose the correct portal so each role lands in the right dashboard, tools, and navigation flow.</span></div>
+
+                    <div class="module-item"><strong>💡 Why it matters</strong><span>InsightED is not one screen for everyone. The Nexus layer prevents confusion by turning a multi-portal product into a single guided experience.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Users reach the correct tools faster, while administrators can test or supervise multiple role contexts without creating separate accounts for every portal.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🏫</div>
+                    <div>
+                        <h3>School Head Data Collection and Verification</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This is the field data-capture layer for school-level information. It replaces scattered reporting with modular school submissions that can be reviewed, synced, and reused in dashboards.</span></div>
+
+                    <div class="module-item"><strong>🗂️ Data captured</strong><span>Units 1–9 cover school identity, learners, organized classes, learner profile, shifting modality, school resources, physical facilities, school location, and infrastructure needs.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>School heads can submit complete and traceable school records even with poor internet, while division and regional offices receive cleaner data for monitoring and planning.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🏗️</div>
+                    <div>
+                        <h3>Infrastructure and Engineering Operations</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer tracks infrastructure projects from creation to monitoring, inspection, evidence upload, and validation. It gives engineers and implementers a shared project record.</span></div>
+
+                    <div class="module-item"><strong>🛠️ Field workflows</strong><span>Site inspection, damage assessment, material inventory, school resources forms, progress updates, photo evidence, and implementation status tracking.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Leadership can see which projects are planned, ongoing, delayed, damaged, donated, or completed, while field teams can keep project evidence in one auditable place.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🏢</div>
+                    <div>
+                        <h3>RO / SDO Monitoring and School Management</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer helps regional and division offices supervise schools under their jurisdiction. It turns school submissions and operational records into manageable lists, audits, and dashboards.</span></div>
+
+                    <div class="module-item"><strong>🔍 Review workflows</strong><span>Users can inspect school records, validate submissions, check personnel-related ESF7 data, manage account access, review location data, and follow up on schools that need action.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>RO and SDO teams get a clearer picture of school compliance, data quality, jurisdiction coverage, and operational priorities without manually consolidating spreadsheets.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">💸</div>
+                    <div>
+                        <h3>SIIF Monitoring and Finance Visibility</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>The SIIF layer connects school plan submissions with allocation, budget, appropriation, utilization, and review status. It is built for monitoring which schools or divisions need follow-up.</span></div>
+
+                    <div class="module-item"><strong>📈 Monitoring workflows</strong><span>RO users can compare divisions, SDO users can inspect schools, and finance/program users can review budget-related figures and utilization status.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>SIIF becomes easier to track from regional overview down to individual school details, with financial and submission signals visible in the same workflow.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🏛️</div>
+                    <div>
+                        <h3>EFD / HRODI / Facilities and HR Monitoring</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer supports central facilities and personnel oversight. It connects infrastructure, construction, class-size, registry, and HR-related monitoring in one ecosystem.</span></div>
+
+                    <div class="module-item"><strong>📋 Program workflows</strong><span>Users can track facilities programs, review construction progress, inspect MOA-linked projects, analyze class-size pressure, and maintain official or school-head registry data.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Central teams can see how facilities, staffing, class-size, and program records relate to each other instead of reviewing each stream in isolation.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">📊</div>
+                    <div>
+                        <h3>HQ and Central-Office Analytics</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>The HQ layer gives national users a controlled workspace for high-level monitoring, registry lookup, school search, finance review, personnel analytics, and facilities analytics.</span></div>
+
+                    <div class="module-item"><strong>🧠 Decision workflows</strong><span>HQ users can inspect school records, compare national indicators, review personnel and facilities data, and connect finance or program signals to operational evidence.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>National leadership receives decision-ready views instead of raw field submissions, helping translate verified data into policy, allocation, and program actions.</span></div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🛟</div>
+                    <div>
+                        <h3>Ticketing, QA, and Support Operations</h3>
+
+                    </div>
+                </div>
+                <div class="module-list">
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer gives InsightED a structured support channel. Users can report problems, attach evidence, follow ticket status, and receive updates while support teams triage and resolve concerns.</span></div>
+
+                    <div class="module-item"><strong>🤝 Support workflows</strong><span>Support staff can review issues, manage attachments, update statuses, document resolutions, publish announcements, and identify recurring rollout problems.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Field issues become trackable operational data, giving the rollout team a clearer way to stabilize the platform and respond to users.</span></div>
+                </div>
+            </div>
+        </section>
+
+        <section id="panel-stack" class="section-panel">
+            <h2>Repo-grounded tech stack</h2>
+            <p class="section-lead">
+                InsightED uses a web/PWA stack because its users work across offices, schools, and field locations with different devices and connectivity conditions. The stack is organized around the jobs the platform must perform: fast portals, offline field capture, secure APIs, durable records, clear dashboards, and stable rollout operations.
+            </p>
+            <div class="tech-stack-grid">
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">⚛️</div>
+                        <div>
+                            <h3>React, Vite, and React Router</h3>
+                            <div class="tech-subtitle">Frontend portal foundation for role-based screens and navigation.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They help InsightED build fast, reusable portal screens so each user role can open the right dashboard and workflow quickly.</p>
+                        </div>
+
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">React</span><span class="stack-tag">Vite</span><span class="stack-tag">React Router</span><span class="stack-tag">HashRouter</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">🎨</div>
+                        <div>
+                            <h3>Tailwind, custom CSS, and Framer Motion</h3>
+                            <div class="tech-subtitle">Presentation layer for a cleaner, more consistent multi-portal experience.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They make InsightED’s forms, cards, filters, dashboards, and mobile screens easier to read and use across all portals.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">Tailwind CSS</span><span class="stack-tag">Custom CSS</span><span class="stack-tag">Framer Motion</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">📊</div>
+                        <div>
+                            <h3>Recharts, Leaflet, and dashboard UI</h3>
+                            <div class="tech-subtitle">Visualization tools for metrics, maps, and drilldowns.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They turn school, SIIF, project, and location data into charts and maps that are easier to understand than raw tables.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">Recharts</span><span class="stack-tag">Leaflet</span><span class="stack-tag">React Leaflet</span><span class="stack-tag">Maps</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">📶</div>
+                        <div>
+                            <h3>PWA, Workbox, IndexedDB, and Outbox</h3>
+                            <div class="tech-subtitle">Offline-first layer for schools and field teams with unstable connectivity.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They let users save school forms and field updates offline, then sync the data once internet connection returns.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">Vite PWA</span><span class="stack-tag">Workbox</span><span class="stack-tag">IndexedDB</span><span class="stack-tag">Outbox</span><span class="stack-tag">Sync Center</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">🧠</div>
+                        <div>
+                            <h3>Node.js, Express, PostgreSQL, and Recharts</h3>
+                            <div class="tech-subtitle">Core API, database, and dashboard layer for live operational records.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>Node.js and Express receive user submissions, PostgreSQL stores school, project, SIIF, support, form, and activity records, and dashboard views use the latest backend data so charts, maps, and monitoring screens stay aligned with field responses.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">Node.js</span><span class="stack-tag">Express 5</span><span class="stack-tag">PostgreSQL</span><span class="stack-tag">pg</span><span class="stack-tag">Knex</span><span class="stack-tag">Recharts</span><span class="stack-tag">Live Dashboards</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">🔐</div>
+                        <div>
+                            <h3>JWT, bcrypt, Firebase Admin, and RBAC</h3>
+                            <div class="tech-subtitle">Security layer for role-specific access and scoped workflows.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They protect InsightED by making sure each user only sees the data, schools, dashboards, and actions allowed for their role.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">JWT</span><span class="stack-tag">bcrypt</span><span class="stack-tag">Firebase Admin</span><span class="stack-tag">RBAC</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">🚀</div>
+                        <div>
+                            <h3>Azure VM, PM2, NGINX, and PgBouncer</h3>
+                            <div class="tech-subtitle">Deployment and operations layer for production availability.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They keep InsightED online by running backend services, routing traffic, and managing database connections.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">Azure VM</span><span class="stack-tag">PM2</span><span class="stack-tag">NGINX</span><span class="stack-tag">PgBouncer</span>
+                    </div>
+                </div>
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">🧪</div>
+                        <div>
+                            <h3>ESLint, tests, scripts, and diagnostics</h3>
+                            <div class="tech-subtitle">Quality layer for reducing regressions during rapid rollout.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>They help the team find errors earlier and keep school head, engineer, RO/SDO, HQ, SIIF, and ticketing workflows stable.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">ESLint</span><span class="stack-tag">Tests</span><span class="stack-tag">Diagnostics</span><span class="stack-tag">Deploy scripts</span>
+                    </div>
+                </div>
+
+
+
+                <div class="tech-card">
+                    <div class="tech-card-header">
+                        <div class="tech-icon">✅</div>
+                        <div>
+                            <h3>React Hook Form, Zod, and Backend Validation</h3>
+                            <div class="tech-subtitle">Validation layer for accurate submissions and review-ready records.</div>
+                        </div>
+                    </div>
+                    <div class="reason-grid">
+                        <div class="reason-block">
+                            <strong>How this helps InsightED</strong>
+                            <p>Form rules, smart math checks, required-field checks, and alert-style UI indicators help users submit correct data, catch mismatched totals, prevent mistyped entries, and notify concerned personnel when records require validation.</p>
+                        </div>
+                    </div>
+                    <div class="stack-tags">
+                        <span class="stack-tag">React Hook Form</span><span class="stack-tag">Zod</span><span class="stack-tag">Smart Math Checks</span><span class="stack-tag">UI Alerts</span><span class="stack-tag">Backend Validation</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="panel-stride" class="section-panel">
+            <h2>How InsightED connects to STRIDE</h2>
+            <p class="section-lead">
+                InsightED is the capture, workflow, validation, and monitoring layer. STRIDE is the strategic analytics and decision-support layer.
+                Together, they turn verified operational records into resource planning, infrastructure monitoring, and leadership dashboards.
+            </p>
+
+            <div class="flow">
+                <div class="flow-step">
+                    <div class="flow-icon">📥</div>
+                    <strong>Capture</strong>
+                    <span>InsightED collects school, project, budget, HR, SIIF, and support records directly from field and office users.</span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">✅</div>
+                    <strong>Validate</strong>
+                    <span>School heads, engineers, RO/SDO teams, and HQ users review submissions so dashboards use trusted records.</span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">🗄️</div>
+                    <strong>Persist</strong>
+                    <span>Validated information is saved as database records, evidence files, activity logs, and audit-ready histories.</span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">📊</div>
+                    <strong>Analyze</strong>
+                    <span>InsightED turns verified data into dashboards, maps, metrics, summaries, and program-level monitoring signals.</span>
+                </div>
+                <div class="flow-step">
+                    <div class="flow-icon">🎯</div>
+                    <strong>Decide</strong>
+                    <span>Leaders use those signals to guide allocation, follow-up, reporting, policy, and operational action.</span>
+                </div>
+            </div>
+
+            <h2>Strategic roadmap</h2>
+            <div class="roadmap">
+                <div class="roadmap-card">
+                    <h3><span class="year-badge">2026</span><span class="roadmap-title">Stabilization and role coverage</span></h3>
+                    <ul>
+                        <li>Stabilize school head and engineer workflows.</li>
+                        <li>Finish RO/SDO monitoring and SIIF usability.</li>
+                        <li>Improve Nexus, HQ, QA, ticketing, and visual consistency.</li>
+                        <li>Prepare STRIDE-style school and project monitoring views.</li>
+                    </ul>
+                </div>
+                <div class="roadmap-card">
+                    <h3><span class="year-badge">2027</span><span class="roadmap-title">Predictive intelligence</span></h3>
+                    <ul>
+                        <li>Use accumulated records for predictive models.</li>
+                        <li>Add risk scoring for delays, shortages, and disasters.</li>
+                        <li>Expand anomaly detection and data health checks.</li>
+                        <li>Improve AI-assisted dashboard summaries.</li>
+                    </ul>
+                </div>
+                <div class="roadmap-card">
+                    <h3><span class="year-badge">2028</span><span class="roadmap-title">Interoperability</span></h3>
+                    <ul>
+                        <li>Move toward a One-Gov style data backbone.</li>
+                        <li>Formalize APIs for partners such as DPWH and DBM.</li>
+                        <li>Support scenario modeling and richer planning tools.</li>
+                        <li>Explore digital twin and policy assistant concepts.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section id="panel-schoolProfile" class="section-panel">
+            <h2>School Profile Data Elements</h2>
+            <p class="section-lead">
+                This view summarizes the main information collected from School Head submissions. It organizes school profile, learner, class, resource, facility, location, safety, and progress details in plain language.
+            </p>
+
+            <div class="dictionary-summary">
+                <div class="card">
+                    <div class="icon">🏫</div>
+                    <h3>Canonical Record</h3>
+                    <p>The main school record stores school identity, enrollment, learner profile, class modality, resources, facilities, location, and completion progress.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">🧾</div>
+                    <h3>Data Strategy</h3>
+                    <p>Detailed supporting records keep facilities, location, ownership files, uploaded evidence, performance logs, and audit feedback organized for reporting.</p>
+                </div>
+            </div>
+
+            <table class="dictionary-table">
+                <tr>
+                    <th>Area</th>
+                    <th>Data Elements</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>Core Identifiers</td>
+                    <td><ul class="element-list"><li>Unique school record number</li><li>Official DepEd School ID</li><li>Date the school record was created</li><li>Date the school record was last updated</li></ul></td>
+                    <td>Defines record uniqueness and synchronization metadata.</td>
+                </tr>
+                <tr>
+                    <td>Unit 1: School Identity</td>
+                    <td><ul class="element-list"><li>School name</li><li>Region, division, and district</li><li>Map location coordinates</li><li>School head or principal</li><li>Land or building ownership status</li></ul></td>
+                    <td>Stores school location, leadership, curricular, ownership, and establishment profile.</td>
+                </tr>
+                <tr>
+                    <td>Unit 2: Learners</td>
+                    <td><ul class="element-list"><li>Total number of learners</li><li>Male learner count</li><li>Female learner count</li><li>Enrollment breakdown by grade level and learner group</li></ul></td>
+                    <td>Captures enrollment by grade level, gender, and SNED counts.</td>
+                </tr>
+                <tr>
+                    <td>Unit 3: Organized Classes</td>
+                    <td><ul class="element-list"><li>Whether the school has multigrade classes</li><li>Number of multigrade sections</li><li>Class and section counts by grade level</li></ul></td>
+                    <td>Tracks section counts, class sizes, and multigrade operations.</td>
+                </tr>
+                <tr>
+                    <td>Unit 4: Learner Profile</td>
+                    <td><ul class="element-list"><li>Learner groups served by the school</li><li>Nutrition and health status counts</li><li>Alternative Learning System learner counts</li><li>Indigenous Peoples learner count</li><li>Muslim learner or ALIVE program count</li></ul></td>
+                    <td>Captures vulnerable groups, health indicators, ALS, IP, and ALIVE program counts.</td>
+                </tr>
+                <tr>
+                    <td>Unit 5: Shifting & Modality</td>
+                    <td><ul class="element-list"><li>Whether the school uses shifting schedules</li><li>Type of class schedule or shifting setup</li><li>Modular distance learning availability</li><li>Online distance learning availability</li><li>Blended learning availability</li></ul></td>
+                    <td>Documents delivery modes and school scheduling arrangements.</td>
+                </tr>
+                <tr>
+                    <td>Unit 6: School Resources</td>
+                    <td><ul class="element-list"><li>Furniture inventory</li><li>ICT equipment inventory</li><li>Water, sanitation, and hygiene facilities</li><li>Electricity, water, and connectivity status</li></ul></td>
+                    <td>Tracks furniture, ICT, WASH, utilities, and non-building school assets.</td>
+                </tr>
+                <tr>
+                    <td>Unit 7: Facilities</td>
+                    <td><ul class="element-list"><li>Building inventory</li><li>Room inventory</li><li>Available buildable spaces</li><li>Detailed building records</li><li>Repair needs and recommended actions</li><li>Condemned or demolition-tagged structures</li></ul></td>
+                    <td>Maintains building, room, repair, demolition, and buildable-space records.</td>
+                </tr>
+                <tr>
+                    <td>Unit 8: Terrain</td>
+                    <td><ul class="element-list"><li>School location profile</li><li>Transportation options to reach the school</li><li>Road access and paving condition</li><li>Hazards and calamities affecting the school</li></ul></td>
+                    <td>Stores access, terrain, hazard, and proximity information.</td>
+                </tr>
+                <tr>
+                    <td>Unit 9: Safety Audit</td>
+                    <td><ul class="element-list"><li>General safety observations</li><li>Electrical wiring condition</li><li>Fire exit availability</li><li>Working fire extinguisher count</li><li>Safety remarks and notes</li></ul></td>
+                    <td>Tracks safety markers, wiring, fire exits, extinguishers, and remarks.</td>
+                </tr>
+                <tr>
+                    <td>Monitoring</td>
+                    <td><ul class="element-list"><li>Progress for each School Head unit</li><li>Overall unit completion score</li><li>Total completion percentage</li><li>Last update date for each unit</li></ul></td>
+                    <td>Measures school-head submission progress and completion status.</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="panel-infrastructure" class="section-panel">
+            <h2>Infrastructure Data Elements</h2>
+            <p class="section-lead">
+                This view summarizes the main information used by Division Engineers to monitor infrastructure projects. It organizes project details, photo evidence, uploaded files, user access, required documents, and progress updates in plain language.
+            </p>
+
+            <div class="dictionary-summary">
+                <div class="card">
+                    <div class="icon">🏗️</div>
+                    <h3>Project Master Record</h3>
+                    <p>The main project record stores each infrastructure project’s identity, school, location, budget, contractor, phase, and progress details.</p>
+                </div>
+                <div class="card">
+                    <div class="icon">📸</div>
+                    <h3>Evidence & Documents</h3>
+                    <p>Supporting records store project photos, required documents, file details, upload history, and evidence metadata.</p>
+                </div>
+            </div>
+
+            <table class="dictionary-table">
+                <tr>
+                    <th>Record Type</th>
+                    <th>Data Elements</th>
+                    <th>Purpose</th>
+                </tr>
+                <tr>
+                    <td>Infrastructure Project Record</td>
+                    <td><ul class="element-list"><li>Project record number</li><li>InsightED project tracking code</li><li>Project name</li><li>School name and School ID</li><li>Region and division</li><li>Project category</li><li>Current construction phase</li><li>Reported accomplishment percentage</li></ul></td>
+                    <td>Master project record for infrastructure creation, monitoring, assignment, geotagging, budget, contractor, completion, and triangulated progress.</td>
+                </tr>
+                <tr>
+                    <td>Project Photo Evidence</td>
+                    <td><ul class="element-list"><li>Image record number</li><li>Linked project</li><li>Photo category</li><li>File location</li><li>Stored image file reference</li><li>Photo geotag location</li><li>Date and time the photo was taken</li><li>Person who uploaded the photo</li><li>Camera and image metadata</li></ul></td>
+                    <td>Stores photographic evidence for COA-compliant progress reporting and site validation.</td>
+                </tr>
+                <tr>
+                    <td>Uploaded Files and Documents</td>
+                    <td><ul class="element-list"><li>File record number</li><li>File fingerprint for duplicate checking</li><li>Stored file content</li><li>File type</li><li>File size</li><li>Date the file was stored</li></ul></td>
+                    <td>Centralized blob storage for high-resolution photos, PDFs, evidence files, and deduplicated binary assets.</td>
+                </tr>
+                <tr>
+                    <td>Engineer User Accounts</td>
+                    <td><ul class="element-list"><li>User account number</li><li>Official email address</li><li>User role</li><li>Full name</li><li>Region and division assignment</li><li>Account category</li><li>Secondary access passcode</li></ul></td>
+                    <td>Stores Division Engineer profile, authentication, role, and administrative scope.</td>
+                </tr>
+                <tr>
+                    <td>Project Update History</td>
+                    <td><ul class="element-list"><li>Update record number</li><li>Linked project tracking code</li><li>Updated accomplishment percentage</li><li>Updated project status</li><li>Person who made the update</li><li>Date the update was submitted</li></ul></td>
+                    <td>Transactional history of project status and accomplishment updates submitted by engineers.</td>
+                </tr>
+                <tr>
+                    <td>Project Required Documents</td>
+                    <td><ul class="element-list"><li>Document record number</li><li>Linked project</li><li>Program of Works file</li><li>DUPA file</li><li>Contract file</li></ul></td>
+                    <td>Maps mandatory project PDFs such as Program of Works, DUPA, and contracts to binary storage records.</td>
+                </tr>
+            </table>
+
+            <div class="callout">
+                <strong>Data integrity rule:</strong> A project should not be marked as completed unless the actual completion date is recorded and at least one external completion photo is available.
+            </div>
+        </section>
+
+        <section id="panel-esf7" class="section-panel"></section>
+
+        <section id="panel-nosca" class="section-panel"></section>
+
+        <section id="panel-siifElements" class="section-panel"></section>
+    </main>
+
+    <script>
+        const heroContent = {
+            overview: {
+                eyebrow: "Field-to-dashboard operating system",
+                title: "\n\nInsight<span class=\"title-red\">ED</span> as a <span class=\"title-red\">centralized</span> data collection platform",
+                description:
+                    "InsightED is a mobile-first ecosystem for collecting, validating, monitoring, and analyzing school, infrastructure, personnel, finance, SIIF, and support data. It connects school heads, engineers, division offices, regional offices, central office units, finance users, and support teams through role-specific portals and STRIDE-style decision dashboards.",
+                stats: [
+                    { value: "8", label: "Major module families" },
+                    { value: "7", label: "InsightED-related repositories reviewed" },
+                    { value: "PWA", label: "Offline-first school and field workflows" },
+                    { value: "STRIDE", label: "Strategic analytics and decision support" }
+                ]
+            },
+            modules: {
+                eyebrow: "Modules mapped to users",
+                title: "Insight<span class=\"title-red\">ED</span> organizes its platform into <span class=\"title-red\">core operational modules</span>.",
+                description:
+                    "This view presents the platform’s major module families for portal routing, school data capture, engineering operations, RO/SDO monitoring, SIIF visibility, facilities and HR monitoring, HQ analytics, and support operations.",
+                stats: [
+                    { value: "Field", label: "School heads and engineers" },
+                    { value: "Review", label: "RO, SDO, EFD, and HRODI teams" },
+                    { value: "Lead", label: "HQ, finance, and decision-makers" },
+                    { value: "Support", label: "QA, rollout, and helpdesk users" }
+                ]
+            },
+            stack: {
+                eyebrow: "Repo-grounded technical architecture",
+                title: "Insight<span class=\"title-red\">ED</span> is built as a <span class=\"title-red\">modern</span> React, Node, PostgreSQL, and <span class=\"title-red\">PWA platform</span>.",
+                description:
+                    "Across the reviewed repositories, InsightED uses React, Vite, Tailwind, Framer Motion, Recharts, Leaflet, service workers, IndexedDB, Node.js, Express, PostgreSQL, Knex, Firebase Admin, NGINX, PM2, and Azure VM deployment patterns.",
+                stats: [
+                    { value: "React", label: "Frontend application layer" },
+                    { value: "Node", label: "Express API and services" },
+                    { value: "Postgres", label: "Operational data persistence" },
+                    { value: "Azure VM", label: "Backend deployment direction" }
+                ]
+            },
+            stride: {
+                eyebrow: "Capture → validate → analyze → decide",
+                title: "Insight<span class=\"title-red\">ED</span> feeds <span class=\"title-red\">data dashboards</span> including the <span class=\"title-red\">STRIDE</span> Dashboard.",
+                description:
+                    "InsightED is the capture, workflow, validation, and monitoring layer; STRIDE is the strategic analytics and decision-support layer. Together, they convert verified school, infrastructure, budget, HR, and evidence records into planning dashboards and leadership action.",
+                stats: [
+                    { value: "Capture", label: "School, project, SIIF, HR, and support data" },
+                    { value: "Validate", label: "School head, engineer, RO/SDO, and HQ review" },
+                    { value: "Analyze", label: "Dashboards, maps, metrics, and summaries" },
+                    { value: "Decide", label: "Allocation, follow-up, reporting, and policy" }
+                ]
+            },
+            schoolProfile: {
+                eyebrow: "Data Elements",
+                title: "School Profile data elements for School Head records.",
+                description:
+                    "This view explains the main information collected from School Head records, including school identity, learners, classes, resources, facilities, location, safety, and completion progress.",
+                stats: [
+                    { value: "School Profile", label: "Main school record" },
+                    { value: "Units 1–9", label: "School Head submission areas" },
+                    { value: "Progress", label: "Completion and update tracking" },
+                    { value: "Supporting Records", label: "Facilities, location, files, and audit details" }
+                ]
+            },
+            infrastructure: {
+                eyebrow: "Data Elements",
+                title: "Infrastructure data elements for Division Engineer records.",
+                description:
+                    "This view explains the main information collected for infrastructure monitoring, including project details, photo evidence, uploaded documents, engineer accounts, and update history.",
+                stats: [
+                    { value: "Projects", label: "Main infrastructure records" },
+                    { value: "Evidence", label: "Photos, locations, and image details" },
+                    { value: "Files", label: "Uploaded project documents" },
+                    { value: "Updates", label: "Status and progress history" }
+                ]
+            },
+            esf7: {
+                eyebrow: "🚧",
+                title: "Under development",
+                description: "",
+                stats: []
+            },
+            nosca: {
+                eyebrow: "🚧",
+                title: "Under development",
+                description: "",
+                stats: []
+            },
+            siifElements: {
+                eyebrow: "🚧",
+                title: "Under development",
+                description: "",
+                stats: []
+            }
+        };
+
+        function updateHero(viewId) {
+            const content = heroContent[viewId] || heroContent.overview;
+            const placeholderViews = ["esf7", "nosca", "siifElements"];
+            const hero = document.getElementById("hero");
+            if (hero) hero.style.display = placeholderViews.includes(viewId) ? "none" : "block";
+            const eyebrow = document.getElementById("hero-eyebrow");
+            const title = document.getElementById("hero-title");
+            const description = document.getElementById("hero-description");
+            eyebrow.textContent = content.eyebrow;
+            title.innerHTML = content.title;
+            description.textContent = content.description;
+        }
+
+        function switchView(viewId) {
+            const buttons = document.querySelectorAll(".sidebar-btn");
+            const panels = document.querySelectorAll(".section-panel");
+
+            buttons.forEach((btn) => btn.classList.remove("active"));
+            panels.forEach((panel) => panel.classList.remove("active"));
+
+            const selectedBtn = Array.from(buttons).find((btn) => btn.getAttribute("onclick").includes(viewId));
+            const activePanel = document.getElementById(`panel-${viewId}`);
+
+            if (selectedBtn) selectedBtn.classList.add("active");
+            if (activePanel) activePanel.classList.add("active");
+
+            updateHero(viewId);
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function initializeSidebarResize() {
+            const resizer = document.getElementById("sidebar-resizer");
+            const root = document.documentElement;
+            const savedWidth = localStorage.getItem("insighted-sidebar-width");
+            const minWidth = 240;
+            const maxWidth = 420;
+
+            if (savedWidth) {
+                const width = Math.min(maxWidth, Math.max(minWidth, Number(savedWidth)));
+                root.style.setProperty("--sidebar-width", `${width}px`);
+            }
+
+            if (!resizer) return;
+
+            const resize = (event) => {
+                const width = Math.min(maxWidth, Math.max(minWidth, event.clientX));
+                root.style.setProperty("--sidebar-width", `${width}px`);
+                localStorage.setItem("insighted-sidebar-width", String(width));
+            };
+
+            const stopResize = () => {
+                document.body.classList.remove("resizing-sidebar");
+                window.removeEventListener("mousemove", resize);
+                window.removeEventListener("mouseup", stopResize);
+            };
+
+            resizer.addEventListener("mousedown", () => {
+                document.body.classList.add("resizing-sidebar");
+                window.addEventListener("mousemove", resize);
+                window.addEventListener("mouseup", stopResize);
+            });
+        }
+
+        initializeSidebarResize();
+        updateHero("overview");
+    </script>
+</body>
+</html>

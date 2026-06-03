@@ -461,18 +461,33 @@
         .section-link-btn.disabled,
         .section-link-btn[aria-disabled="true"] {
             cursor: not-allowed;
-            background: linear-gradient(135deg, #94a3b8, #cbd5e1);
-            color: #f8fafc;
-            border-color: #cbd5e1;
-            box-shadow: none;
-            opacity: 0.78;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #ffffff;
+            border: 1px solid rgba(37, 99, 235, 0.22);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+            opacity: 0.75;
             pointer-events: none;
         }
 
         .section-link-btn.disabled:hover,
         .section-link-btn[aria-disabled="true"]:hover {
             transform: none;
-            box-shadow: none;
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+        }
+
+        .coming-soon-badge {
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 0.15rem 0.5rem;
+            border-radius: 999px;
+            margin-left: 0.45rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.03em;
+            display: inline-flex;
+            align-items: center;
         }
 
         .section-lead {
@@ -2208,7 +2223,7 @@
                 <h2>Infrastructure Data Elements</h2>
                 <span class="section-link-btn disabled" aria-disabled="true">
                     <span>View InsightED for Infrastructure</span>
-                    <span style="opacity: 0.75; font-size: 0.82rem; font-weight: 500;">(Coming soon)</span>
+                    <span class="coming-soon-badge">Coming soon</span>
                 </span>
             </div>
             <p class="section-lead">

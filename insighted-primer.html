@@ -426,6 +426,7 @@
             align-items: center;
             justify-content: flex-start;
             gap: 1rem;
+            flex-wrap: wrap;
             margin-bottom: 0.8rem;
         }
 
@@ -455,6 +456,23 @@
         .section-link-btn:hover {
             transform: translateY(-2px);
             box-shadow: 0 16px 30px rgba(37, 99, 235, 0.24);
+        }
+
+        .section-link-btn.disabled,
+        .section-link-btn[aria-disabled="true"] {
+            cursor: not-allowed;
+            background: linear-gradient(135deg, #94a3b8, #cbd5e1);
+            color: #f8fafc;
+            border-color: #cbd5e1;
+            box-shadow: none;
+            opacity: 0.78;
+            pointer-events: none;
+        }
+
+        .section-link-btn.disabled:hover,
+        .section-link-btn[aria-disabled="true"]:hover {
+            transform: none;
+            box-shadow: none;
         }
 
         .section-lead {
@@ -2012,7 +2030,9 @@
         <section id="panel-schoolProfile" class="section-panel">
             <div class="section-heading-row">
                 <h2>School Profile Data Elements</h2>
-                <a class="section-link-btn" href="School-Head.html.html">
+                <a class="section-link-btn"
+                    href="https://github.com/sebtcheng/insighted-primer/blob/main/School-Head.html.html" target="_blank"
+                    rel="noopener noreferrer">
                     <span>View InsightED for School Heads</span>
                     <span>↗</span>
                 </a>
@@ -2184,7 +2204,13 @@
         </section>
 
         <section id="panel-infrastructure" class="section-panel">
-            <h2>Infrastructure Data Elements</h2>
+            <div class="section-heading-row">
+                <h2>Infrastructure Data Elements</h2>
+                <span class="section-link-btn disabled" aria-disabled="true">
+                    <span>View InsightED for Infrastructure</span>
+                    <span style="opacity: 0.75; font-size: 0.82rem; font-weight: 500;">(Coming soon)</span>
+                </span>
+            </div>
             <p class="section-lead">
                 This view summarizes the main information used by Division Engineers to monitor infrastructure projects.
                 It organizes project details, photo evidence, uploaded files, user access, required documents, and

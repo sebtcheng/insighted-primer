@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -420,6 +421,42 @@
             margin: 1.5rem 0 0.7rem;
         }
 
+        .section-heading-row {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .section-heading-row h2 {
+            margin-bottom: 0;
+        }
+
+        .section-link-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45rem;
+            flex: 0 0 auto;
+            padding: 0.72rem 1rem;
+            border-radius: 999px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-2));
+            color: #ffffff;
+            border: 1px solid rgba(37, 99, 235, 0.22);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.18);
+            font-size: 0.86rem;
+            font-weight: 900;
+            text-decoration: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .section-link-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 16px 30px rgba(37, 99, 235, 0.24);
+        }
+
         .section-lead {
             color: var(--muted);
             max-width: 920px;
@@ -709,7 +746,8 @@
             margin: 1.25rem 0 2rem;
         }
 
-        th, td {
+        th,
+        td {
             padding: 0.95rem 1rem;
             text-align: left;
             border-bottom: 1px solid var(--line);
@@ -962,12 +1000,23 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(8px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @media (max-width: 1100px) {
-            .card-grid, .card-grid.two, .module-list, .roadmap {
+
+            .card-grid,
+            .card-grid.two,
+            .module-list,
+            .roadmap {
                 grid-template-columns: 1fr 1fr;
             }
 
@@ -1121,8 +1170,25 @@
                 font-size: 0.95rem;
             }
 
-            .hero-grid, .card-grid, .card-grid.two, .module-list, .roadmap, .flow, .dictionary-summary, .tech-stack-grid, .stack-summary {
+            .hero-grid,
+            .card-grid,
+            .card-grid.two,
+            .module-list,
+            .roadmap,
+            .flow,
+            .dictionary-summary,
+            .tech-stack-grid,
+            .stack-summary {
                 grid-template-columns: 1fr;
+            }
+
+            .section-heading-row {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .section-link-btn {
+                width: 100%;
             }
 
             .tech-card.full-row {
@@ -1136,7 +1202,8 @@
                 border-radius: 16px;
             }
 
-            th, td {
+            th,
+            td {
                 min-width: 180px;
             }
 
@@ -1161,13 +1228,17 @@
         }
     </style>
 </head>
+
 <body>
     <header class="mobile-header">
         <div class="mobile-header-brand">
-            <img class="mobile-header-logo" src="https://raw.githubusercontent.com/sebtcheng/insighted-images/main/InsightED_logo_5_x_3_in.png" alt="InsightED logo">
+            <img class="mobile-header-logo"
+                src="https://raw.githubusercontent.com/sebtcheng/insighted-images/main/InsightED_logo_5_x_3_in.png"
+                alt="InsightED logo">
             <span class="mobile-header-title">InsightED Guide</span>
         </div>
-        <button id="mobile-menu-toggle" class="mobile-menu-toggle" type="button" aria-label="Open navigation" aria-controls="sidebar" aria-expanded="false">
+        <button id="mobile-menu-toggle" class="mobile-menu-toggle" type="button" aria-label="Open navigation"
+            aria-controls="sidebar" aria-expanded="false">
             <span class="menu-open">☰</span>
             <span class="menu-close">×</span>
         </button>
@@ -1177,7 +1248,9 @@
     <nav id="sidebar">
         <div class="brand">
             <div class="brand-mark">
-                <img class="brand-logo" src="https://raw.githubusercontent.com/sebtcheng/insighted-images/main/InsightED_logo_5_x_3_in.png" alt="InsightED logo">
+                <img class="brand-logo"
+                    src="https://raw.githubusercontent.com/sebtcheng/insighted-images/main/InsightED_logo_5_x_3_in.png"
+                    alt="InsightED logo">
             </div>
         </div>
 
@@ -1186,8 +1259,15 @@
             <button class="sidebar-btn active" onclick="switchView('overview')">
                 <span class="nav-icon">🏠</span>
                 <span class="nav-text">
-                    <span class="nav-title">Ecosystem Overview</span>
+                    <span class="nav-title">System Overview</span>
                     <span class="nav-subtitle">What InsightED connects</span>
+                </span>
+            </button>
+            <button class="sidebar-btn" onclick="switchView('features')">
+                <span class="nav-icon">✨</span>
+                <span class="nav-text">
+                    <span class="nav-title">Salient Features</span>
+                    <span class="nav-subtitle">Core platform advantages</span>
                 </span>
             </button>
             <button class="sidebar-btn" onclick="switchView('modules')">
@@ -1207,7 +1287,7 @@
             <button class="sidebar-btn" onclick="switchView('stride')">
                 <span class="nav-icon">🧭</span>
                 <span class="nav-text">
-                    <span class="nav-title">STRIDE & Roadmap</span>
+                    <span class="nav-title">STRIDE Integration</span>
                     <span class="nav-subtitle">From capture to decisions</span>
                 </span>
             </button>
@@ -1255,11 +1335,15 @@
     <main id="main-content">
         <header class="hero" id="hero">
             <div class="eyebrow" id="hero-eyebrow">Field-to-dashboard operating system</div>
-            <h1 id="hero-title"><br><br>Insight<span class="title-red">ED</span> as a <span class="title-red">centralized</span> data collection platform</h1>
+            <h1 id="hero-title"><br><br>Insight<span class="title-red">ED</span> as a <span
+                    class="title-red">centralized</span> data collection platform</h1>
             <p id="hero-description">
-                InsightED is a mobile-first ecosystem for collecting, validating, monitoring, and analyzing school, infrastructure,
-                personnel, finance, SIIF, and support data. It connects school heads, engineers, division offices, regional offices,
-                central office units, finance users, and support teams through role-specific portals and STRIDE-style decision dashboards.
+                InsightED is a mobile-first ecosystem for collecting, validating, monitoring, and analyzing school,
+                infrastructure,
+                personnel, finance, SIIF, and support data. It connects school heads, engineers, division offices,
+                regional offices,
+                central office units, finance users, and support teams through role-specific portals and STRIDE-style
+                decision dashboards.
             </p>
         </header>
 
@@ -1269,7 +1353,8 @@
                     <div class="icon">🏫</div>
                     <h3>School-Level Capture</h3>
                     <ul>
-                        <li>Captures school profile, learners, classes, resources, facilities, location, and infrastructure needs.</li>
+                        <li>Captures school profile, learners, classes, resources, facilities, location, and
+                            infrastructure needs.</li>
                         <li>Supports school heads working in low-connectivity field conditions.</li>
                     </ul>
                 </div>
@@ -1294,7 +1379,8 @@
                     <h3>Central-Office Analytics</h3>
                     <ul>
                         <li>Shows national-level summaries and program dashboards for Central Office teams.</li>
-                        <li>Connects class-size analysis, school head records, personnel registries, finance views, and facilities monitoring.</li>
+                        <li>Connects class-size analysis, school head records, personnel registries, finance views, and
+                            facilities monitoring.</li>
                     </ul>
                 </div>
                 <div class="card">
@@ -1310,22 +1396,147 @@
                     <h3>Support Ticketing</h3>
                     <ul>
                         <li>Gives users a structured way to report issues and request help.</li>
-                        <li>Helps support teams review attachments, update ticket status, triage concerns, and track resolved cases.</li>
+                        <li>Helps support teams review attachments, update ticket status, triage concerns, and track
+                            resolved cases.</li>
                     </ul>
                 </div>
             </div>
 
-            
+
 
             <div class="callout">
-                <strong>Positioning:</strong> InsightED’s value is not only digitizing forms. Its value is turning verified field records into operational intelligence for school, division, regional, and national decision-making.
+                <strong>Positioning:</strong> InsightED’s value is not only digitizing forms. Its value is turning
+                verified field records into operational intelligence for school, division, regional, and national
+                decision-making.
+            </div>
+        </section>
+
+        <section id="panel-features" class="section-panel">
+            <h2>Salient Features</h2>
+            <p class="section-lead">
+                InsightED’s salient features are grouped into clear capability areas so users can distinguish between
+                data capture, monitoring, data quality, communication, architecture, and offline-readiness benefits.
+            </p>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">📥</div>
+                    <div>
+                        <h3>Data Capture and Field Submission</h3>
+                        <p>Features that help schools submit and update information quickly from the field.</p>
+                    </div>
+                </div>
+                <div class="card-grid two">
+                    <div class="card">
+                        <div class="icon">⚡</div>
+                        <h3>Real-Time Data Collection</h3>
+                        <p>Schools can update their records as new information becomes available, keeping school-level
+                            data current instead of waiting for delayed manual consolidation.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">📶</div>
+                        <h3>Offline Mode</h3>
+                        <p>The PWA can store data in the device browser cache for offline functionality, helping users
+                            continue work even when connectivity is unstable.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">👁️</div>
+                    <div>
+                        <h3>Monitoring and Dashboard Visibility</h3>
+                        <p>Features that move submitted information into review and decision surfaces faster.</p>
+                    </div>
+                </div>
+                <div class="card-grid two">
+                    <div class="card">
+                        <div class="icon">📡</div>
+                        <h3>Real-Time Monitoring</h3>
+                        <p>Regional and division offices can monitor school submissions and school data in real time,
+                            making follow-up faster and more targeted.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">📊</div>
+                        <h3>Straight to Data Dashboards</h3>
+                        <p>Raw submissions flow directly into dashboards, helping users move from field input to
+                            management-level visibility without a separate reporting pipeline.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="module-group">
+                <div class="module-header">
+                    <div class="module-number">🧼</div>
+                    <div>
+                        <h3>Data Quality and Validation</h3>
+                        <p>Features that keep records cleaner before they are used for analysis and reporting.</p>
+                    </div>
+                </div>
+                <div class="card-grid">
+                    <div class="card">
+                        <div class="icon">🧠</div>
+                        <h3>Analysis-Ready Data</h3>
+                        <p>Because records are stored in PostgreSQL with strict data type standards, submitted data
+                            needs little to no input cleaning before analysis.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">✅</div>
+                        <h3>Internal Validation Logic</h3>
+                        <p>In-app data logic can check entries before submission, reducing misentry cases and helping
+                            users correct issues while they are still completing the form.</p>
+                    </div>
+                    <div class="card">
+                        <div class="icon">🔒</div>
+                        <h3>Input Restrictions</h3>
+                        <p>Fields can restrict entries by character type, number format, or character length, keeping
+                            data cleaner at the point of capture.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-grid two">
+                <div class="module-group">
+                    <div class="module-header">
+                        <div class="module-number">📣</div>
+                        <div>
+                            <h3>Communication and User Guidance</h3>
+                            <p>Features that help administrators reach users directly inside the system.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">📣</div>
+                        <h3>In-App Announcements</h3>
+                        <p>Administrators can post announcements, reminders, and alerts directly inside the app so
+                            important updates reach users in the same workspace where they submit data.</p>
+                    </div>
+                </div>
+
+                <div class="module-group">
+                    <div class="module-header">
+                        <div class="module-number">🧩</div>
+                        <div>
+                            <h3>Platform Architecture and Maintainability</h3>
+                            <p>Features that make the platform cohesive for users while remaining flexible for the
+                                development team.</p>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="icon">🧩</div>
+                        <h3>All-in-One App, Modular Design</h3>
+                        <p>Users experience InsightED as one cohesive app, while the system remains modular by design so
+                            teams can update one module without disrupting the others.</p>
+                    </div>
+                </div>
             </div>
         </section>
 
         <section id="panel-modules" class="section-panel">
             <h2>Modules Being Built</h2>
             <p class="section-lead">
-                InsightED is organized into core module families that support data capture, validation, monitoring, analytics, and support operations across the platform.
+                InsightED is organized into core module families that support data capture, validation, monitoring,
+                analytics, and support operations across the platform.
             </p>
 
             <div class="module-group">
@@ -1337,10 +1548,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>This is the front door of InsightED. It detects or lets users choose the correct portal so each role lands in the right dashboard, tools, and navigation flow.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This is the front door of InsightED. It
+                            detects or lets users choose the correct portal so each role lands in the right dashboard,
+                            tools, and navigation flow.</span></div>
 
-                    <div class="module-item"><strong>💡 Why it matters</strong><span>InsightED is not one screen for everyone. The Nexus layer prevents confusion by turning a multi-portal product into a single guided experience.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Users reach the correct tools faster, while administrators can test or supervise multiple role contexts without creating separate accounts for every portal.</span></div>
+                    <div class="module-item"><strong>💡 Why it matters</strong><span>InsightED is not one screen for
+                            everyone. The Nexus layer prevents confusion by turning a multi-portal product into a single
+                            guided experience.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Users reach the correct tools
+                            faster, while administrators can test or supervise multiple role contexts without creating
+                            separate accounts for every portal.</span></div>
                 </div>
             </div>
 
@@ -1353,10 +1570,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>This is the field data-capture layer for school-level information. It replaces scattered reporting with modular school submissions that can be reviewed, synced, and reused in dashboards.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This is the field data-capture layer for
+                            school-level information. It replaces scattered reporting with modular school submissions
+                            that can be reviewed, synced, and reused in dashboards.</span></div>
 
-                    <div class="module-item"><strong>🗂️ Data captured</strong><span>Units 1–9 cover school identity, learners, organized classes, learner profile, shifting modality, school resources, physical facilities, school location, and infrastructure needs.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>School heads can submit complete and traceable school records even with poor internet, while division and regional offices receive cleaner data for monitoring and planning.</span></div>
+                    <div class="module-item"><strong>🗂️ Data captured</strong><span>Units 1–9 cover school identity,
+                            learners, organized classes, learner profile, shifting modality, school resources, physical
+                            facilities, school location, and infrastructure needs.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>School heads can submit complete
+                            and traceable school records even with poor internet, while division and regional offices
+                            receive cleaner data for monitoring and planning.</span></div>
                 </div>
             </div>
 
@@ -1369,10 +1592,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer tracks infrastructure projects from creation to monitoring, inspection, evidence upload, and validation. It gives engineers and implementers a shared project record.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer tracks infrastructure projects
+                            from creation to monitoring, inspection, evidence upload, and validation. It gives engineers
+                            and implementers a shared project record.</span></div>
 
-                    <div class="module-item"><strong>🛠️ Field workflows</strong><span>Site inspection, damage assessment, material inventory, school resources forms, progress updates, photo evidence, and implementation status tracking.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Leadership can see which projects are planned, ongoing, delayed, damaged, donated, or completed, while field teams can keep project evidence in one auditable place.</span></div>
+                    <div class="module-item"><strong>🛠️ Field workflows</strong><span>Site inspection, damage
+                            assessment, material inventory, school resources forms, progress updates, photo evidence,
+                            and implementation status tracking.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Leadership can see which projects
+                            are planned, ongoing, delayed, damaged, donated, or completed, while field teams can keep
+                            project evidence in one auditable place.</span></div>
                 </div>
             </div>
 
@@ -1385,10 +1614,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer helps regional and division offices supervise schools under their jurisdiction. It turns school submissions and operational records into manageable lists, audits, and dashboards.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer helps regional and division
+                            offices supervise schools under their jurisdiction. It turns school submissions and
+                            operational records into manageable lists, audits, and dashboards.</span></div>
 
-                    <div class="module-item"><strong>🔍 Review workflows</strong><span>Users can inspect school records, validate submissions, check personnel-related ESF7 data, manage account access, review location data, and follow up on schools that need action.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>RO and SDO teams get a clearer picture of school compliance, data quality, jurisdiction coverage, and operational priorities without manually consolidating spreadsheets.</span></div>
+                    <div class="module-item"><strong>🔍 Review workflows</strong><span>Users can inspect school records,
+                            validate submissions, check personnel-related ESF7 data, manage account access, review
+                            location data, and follow up on schools that need action.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>RO and SDO teams get a clearer
+                            picture of school compliance, data quality, jurisdiction coverage, and operational
+                            priorities without manually consolidating spreadsheets.</span></div>
                 </div>
             </div>
 
@@ -1401,10 +1636,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>The SIIF layer connects school plan submissions with allocation, budget, appropriation, utilization, and review status. It is built for monitoring which schools or divisions need follow-up.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>The SIIF layer connects school plan
+                            submissions with allocation, budget, appropriation, utilization, and review status. It is
+                            built for monitoring which schools or divisions need follow-up.</span></div>
 
-                    <div class="module-item"><strong>📈 Monitoring workflows</strong><span>RO users can compare divisions, SDO users can inspect schools, and finance/program users can review budget-related figures and utilization status.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>SIIF becomes easier to track from regional overview down to individual school details, with financial and submission signals visible in the same workflow.</span></div>
+                    <div class="module-item"><strong>📈 Monitoring workflows</strong><span>RO users can compare
+                            divisions, SDO users can inspect schools, and finance/program users can review
+                            budget-related figures and utilization status.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>SIIF becomes easier to track from
+                            regional overview down to individual school details, with financial and submission signals
+                            visible in the same workflow.</span></div>
                 </div>
             </div>
 
@@ -1417,10 +1658,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer supports central facilities and personnel oversight. It connects infrastructure, construction, class-size, registry, and HR-related monitoring in one ecosystem.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer supports central facilities and
+                            personnel oversight. It connects infrastructure, construction, class-size, registry, and
+                            HR-related monitoring in one ecosystem.</span></div>
 
-                    <div class="module-item"><strong>📋 Program workflows</strong><span>Users can track facilities programs, review construction progress, inspect MOA-linked projects, analyze class-size pressure, and maintain official or school-head registry data.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Central teams can see how facilities, staffing, class-size, and program records relate to each other instead of reviewing each stream in isolation.</span></div>
+                    <div class="module-item"><strong>📋 Program workflows</strong><span>Users can track facilities
+                            programs, review construction progress, inspect MOA-linked projects, analyze class-size
+                            pressure, and maintain official or school-head registry data.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Central teams can see how
+                            facilities, staffing, class-size, and program records relate to each other instead of
+                            reviewing each stream in isolation.</span></div>
                 </div>
             </div>
 
@@ -1433,10 +1680,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>The HQ layer gives national users a controlled workspace for high-level monitoring, registry lookup, school search, finance review, personnel analytics, and facilities analytics.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>The HQ layer gives national users a
+                            controlled workspace for high-level monitoring, registry lookup, school search, finance
+                            review, personnel analytics, and facilities analytics.</span></div>
 
-                    <div class="module-item"><strong>🧠 Decision workflows</strong><span>HQ users can inspect school records, compare national indicators, review personnel and facilities data, and connect finance or program signals to operational evidence.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>National leadership receives decision-ready views instead of raw field submissions, helping translate verified data into policy, allocation, and program actions.</span></div>
+                    <div class="module-item"><strong>🧠 Decision workflows</strong><span>HQ users can inspect school
+                            records, compare national indicators, review personnel and facilities data, and connect
+                            finance or program signals to operational evidence.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>National leadership receives
+                            decision-ready views instead of raw field submissions, helping translate verified data into
+                            policy, allocation, and program actions.</span></div>
                 </div>
             </div>
 
@@ -1449,10 +1702,16 @@
                     </div>
                 </div>
                 <div class="module-list">
-                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer gives InsightED a structured support channel. Users can report problems, attach evidence, follow ticket status, and receive updates while support teams triage and resolve concerns.</span></div>
+                    <div class="module-item"><strong>🎯 Purpose</strong><span>This layer gives InsightED a structured
+                            support channel. Users can report problems, attach evidence, follow ticket status, and
+                            receive updates while support teams triage and resolve concerns.</span></div>
 
-                    <div class="module-item"><strong>🤝 Support workflows</strong><span>Support staff can review issues, manage attachments, update statuses, document resolutions, publish announcements, and identify recurring rollout problems.</span></div>
-                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Field issues become trackable operational data, giving the rollout team a clearer way to stabilize the platform and respond to users.</span></div>
+                    <div class="module-item"><strong>🤝 Support workflows</strong><span>Support staff can review issues,
+                            manage attachments, update statuses, document resolutions, publish announcements, and
+                            identify recurring rollout problems.</span></div>
+                    <div class="module-item"><strong>✅ Primary outcome</strong><span>Field issues become trackable
+                            operational data, giving the rollout team a clearer way to stabilize the platform and
+                            respond to users.</span></div>
                 </div>
             </div>
         </section>
@@ -1460,7 +1719,10 @@
         <section id="panel-stack" class="section-panel">
             <h2>Repo-grounded tech stack</h2>
             <p class="section-lead">
-                InsightED uses a web/PWA stack because its users work across offices, schools, and field locations with different devices and connectivity conditions. The stack is organized around the jobs the platform must perform: fast portals, offline field capture, secure APIs, durable records, clear dashboards, and stable rollout operations.
+                InsightED uses a web/PWA stack because its users work across offices, schools, and field locations with
+                different devices and connectivity conditions. The stack is organized around the jobs the platform must
+                perform: fast portals, offline field capture, secure APIs, durable records, clear dashboards, and stable
+                rollout operations.
             </p>
             <div class="tech-stack-grid">
                 <div class="tech-card">
@@ -1468,18 +1730,21 @@
                         <div class="tech-icon">⚛️</div>
                         <div>
                             <h3>React, Vite, and React Router</h3>
-                            <div class="tech-subtitle">Frontend portal foundation for role-based screens and navigation.</div>
+                            <div class="tech-subtitle">Frontend portal foundation for role-based screens and navigation.
+                            </div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They help InsightED build fast, reusable portal screens so each user role can open the right dashboard and workflow quickly.</p>
+                            <p>They help InsightED build fast, reusable portal screens so each user role can open the
+                                right dashboard and workflow quickly.</p>
                         </div>
 
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">React</span><span class="stack-tag">Vite</span><span class="stack-tag">React Router</span><span class="stack-tag">HashRouter</span>
+                        <span class="stack-tag">React</span><span class="stack-tag">Vite</span><span
+                            class="stack-tag">React Router</span><span class="stack-tag">HashRouter</span>
                     </div>
                 </div>
 
@@ -1488,17 +1753,20 @@
                         <div class="tech-icon">🎨</div>
                         <div>
                             <h3>Tailwind, custom CSS, and Framer Motion</h3>
-                            <div class="tech-subtitle">Presentation layer for a cleaner, more consistent multi-portal experience.</div>
+                            <div class="tech-subtitle">Presentation layer for a cleaner, more consistent multi-portal
+                                experience.</div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They make InsightED’s forms, cards, filters, dashboards, and mobile screens easier to read and use across all portals.</p>
+                            <p>They make InsightED’s forms, cards, filters, dashboards, and mobile screens easier to
+                                read and use across all portals.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">Tailwind CSS</span><span class="stack-tag">Custom CSS</span><span class="stack-tag">Framer Motion</span>
+                        <span class="stack-tag">Tailwind CSS</span><span class="stack-tag">Custom CSS</span><span
+                            class="stack-tag">Framer Motion</span>
                     </div>
                 </div>
 
@@ -1513,11 +1781,13 @@
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They turn school, SIIF, project, and location data into charts and maps that are easier to understand than raw tables.</p>
+                            <p>They turn school, SIIF, project, and location data into charts and maps that are easier
+                                to understand than raw tables.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">Recharts</span><span class="stack-tag">Leaflet</span><span class="stack-tag">React Leaflet</span><span class="stack-tag">Maps</span>
+                        <span class="stack-tag">Recharts</span><span class="stack-tag">Leaflet</span><span
+                            class="stack-tag">React Leaflet</span><span class="stack-tag">Maps</span>
                     </div>
                 </div>
 
@@ -1526,17 +1796,21 @@
                         <div class="tech-icon">📶</div>
                         <div>
                             <h3>PWA, Workbox, IndexedDB, and Outbox</h3>
-                            <div class="tech-subtitle">Offline-first layer for schools and field teams with unstable connectivity.</div>
+                            <div class="tech-subtitle">Offline-first layer for schools and field teams with unstable
+                                connectivity.</div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They let users save school forms and field updates offline, then sync the data once internet connection returns.</p>
+                            <p>They let users save school forms and field updates offline, then sync the data once
+                                internet connection returns.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">Vite PWA</span><span class="stack-tag">Workbox</span><span class="stack-tag">IndexedDB</span><span class="stack-tag">Outbox</span><span class="stack-tag">Sync Center</span>
+                        <span class="stack-tag">Vite PWA</span><span class="stack-tag">Workbox</span><span
+                            class="stack-tag">IndexedDB</span><span class="stack-tag">Outbox</span><span
+                            class="stack-tag">Sync Center</span>
                     </div>
                 </div>
 
@@ -1545,17 +1819,23 @@
                         <div class="tech-icon">🧠</div>
                         <div>
                             <h3>Node.js, Express, PostgreSQL, and Recharts</h3>
-                            <div class="tech-subtitle">Core API, database, and dashboard layer for live operational records.</div>
+                            <div class="tech-subtitle">Core API, database, and dashboard layer for live operational
+                                records.</div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>Node.js and Express receive user submissions, PostgreSQL stores school, project, SIIF, support, form, and activity records, and dashboard views use the latest backend data so charts, maps, and monitoring screens stay aligned with field responses.</p>
+                            <p>Node.js and Express receive user submissions, PostgreSQL stores school, project, SIIF,
+                                support, form, and activity records, and dashboard views use the latest backend data so
+                                charts, maps, and monitoring screens stay aligned with field responses.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">Node.js</span><span class="stack-tag">Express 5</span><span class="stack-tag">PostgreSQL</span><span class="stack-tag">pg</span><span class="stack-tag">Knex</span><span class="stack-tag">Recharts</span><span class="stack-tag">Live Dashboards</span>
+                        <span class="stack-tag">Node.js</span><span class="stack-tag">Express 5</span><span
+                            class="stack-tag">PostgreSQL</span><span class="stack-tag">pg</span><span
+                            class="stack-tag">Knex</span><span class="stack-tag">Recharts</span><span
+                            class="stack-tag">Live Dashboards</span>
                     </div>
                 </div>
 
@@ -1564,17 +1844,20 @@
                         <div class="tech-icon">🔐</div>
                         <div>
                             <h3>JWT, bcrypt, Firebase Admin, and RBAC</h3>
-                            <div class="tech-subtitle">Security layer for role-specific access and scoped workflows.</div>
+                            <div class="tech-subtitle">Security layer for role-specific access and scoped workflows.
+                            </div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They protect InsightED by making sure each user only sees the data, schools, dashboards, and actions allowed for their role.</p>
+                            <p>They protect InsightED by making sure each user only sees the data, schools, dashboards,
+                                and actions allowed for their role.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">JWT</span><span class="stack-tag">bcrypt</span><span class="stack-tag">Firebase Admin</span><span class="stack-tag">RBAC</span>
+                        <span class="stack-tag">JWT</span><span class="stack-tag">bcrypt</span><span
+                            class="stack-tag">Firebase Admin</span><span class="stack-tag">RBAC</span>
                     </div>
                 </div>
 
@@ -1583,17 +1866,20 @@
                         <div class="tech-icon">🚀</div>
                         <div>
                             <h3>Azure VM, PM2, NGINX, and PgBouncer</h3>
-                            <div class="tech-subtitle">Deployment and operations layer for production availability.</div>
+                            <div class="tech-subtitle">Deployment and operations layer for production availability.
+                            </div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They keep InsightED online by running backend services, routing traffic, and managing database connections.</p>
+                            <p>They keep InsightED online by running backend services, routing traffic, and managing
+                                database connections.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">Azure VM</span><span class="stack-tag">PM2</span><span class="stack-tag">NGINX</span><span class="stack-tag">PgBouncer</span>
+                        <span class="stack-tag">Azure VM</span><span class="stack-tag">PM2</span><span
+                            class="stack-tag">NGINX</span><span class="stack-tag">PgBouncer</span>
                     </div>
                 </div>
 
@@ -1602,17 +1888,20 @@
                         <div class="tech-icon">🧪</div>
                         <div>
                             <h3>ESLint, tests, scripts, and diagnostics</h3>
-                            <div class="tech-subtitle">Quality layer for reducing regressions during rapid rollout.</div>
+                            <div class="tech-subtitle">Quality layer for reducing regressions during rapid rollout.
+                            </div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>They help the team find errors earlier and keep school head, engineer, RO/SDO, HQ, SIIF, and ticketing workflows stable.</p>
+                            <p>They help the team find errors earlier and keep school head, engineer, RO/SDO, HQ, SIIF,
+                                and ticketing workflows stable.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">ESLint</span><span class="stack-tag">Tests</span><span class="stack-tag">Diagnostics</span><span class="stack-tag">Deploy scripts</span>
+                        <span class="stack-tag">ESLint</span><span class="stack-tag">Tests</span><span
+                            class="stack-tag">Diagnostics</span><span class="stack-tag">Deploy scripts</span>
                     </div>
                 </div>
 
@@ -1623,17 +1912,22 @@
                         <div class="tech-icon">✅</div>
                         <div>
                             <h3>React Hook Form, Zod, and Backend Validation</h3>
-                            <div class="tech-subtitle">Validation layer for accurate submissions and review-ready records.</div>
+                            <div class="tech-subtitle">Validation layer for accurate submissions and review-ready
+                                records.</div>
                         </div>
                     </div>
                     <div class="reason-grid">
                         <div class="reason-block">
                             <strong>How this helps InsightED</strong>
-                            <p>Form rules, smart math checks, required-field checks, and alert-style UI indicators help users submit correct data, catch mismatched totals, prevent mistyped entries, and notify concerned personnel when records require validation.</p>
+                            <p>Form rules, smart math checks, required-field checks, and alert-style UI indicators help
+                                users submit correct data, catch mismatched totals, prevent mistyped entries, and notify
+                                concerned personnel when records require validation.</p>
                         </div>
                     </div>
                     <div class="stack-tags">
-                        <span class="stack-tag">React Hook Form</span><span class="stack-tag">Zod</span><span class="stack-tag">Smart Math Checks</span><span class="stack-tag">UI Alerts</span><span class="stack-tag">Backend Validation</span>
+                        <span class="stack-tag">React Hook Form</span><span class="stack-tag">Zod</span><span
+                            class="stack-tag">Smart Math Checks</span><span class="stack-tag">UI Alerts</span><span
+                            class="stack-tag">Backend Validation</span>
                     </div>
                 </div>
             </div>
@@ -1642,42 +1936,50 @@
         <section id="panel-stride" class="section-panel">
             <h2>How InsightED connects to STRIDE</h2>
             <p class="section-lead">
-                InsightED is the capture, workflow, validation, and monitoring layer. STRIDE is the strategic analytics and decision-support layer.
-                Together, they turn verified operational records into resource planning, infrastructure monitoring, and leadership dashboards.
+                InsightED is the capture, workflow, validation, and monitoring layer. STRIDE is the strategic analytics
+                and decision-support layer.
+                Together, they turn verified operational records into resource planning, infrastructure monitoring, and
+                leadership dashboards.
             </p>
 
             <div class="flow">
                 <div class="flow-step">
                     <div class="flow-icon">📥</div>
                     <strong>Capture</strong>
-                    <span>InsightED collects school, project, budget, HR, SIIF, and support records directly from field and office users.</span>
+                    <span>InsightED collects school, project, budget, HR, SIIF, and support records directly from field
+                        and office users.</span>
                 </div>
                 <div class="flow-step">
                     <div class="flow-icon">✅</div>
                     <strong>Validate</strong>
-                    <span>School heads, engineers, RO/SDO teams, and HQ users review submissions so dashboards use trusted records.</span>
+                    <span>School heads, engineers, RO/SDO teams, and HQ users review submissions so dashboards use
+                        trusted records.</span>
                 </div>
                 <div class="flow-step">
                     <div class="flow-icon">🗄️</div>
                     <strong>Persist</strong>
-                    <span>Validated information is saved as database records, evidence files, activity logs, and audit-ready histories.</span>
+                    <span>Validated information is saved as database records, evidence files, activity logs, and
+                        audit-ready histories.</span>
                 </div>
                 <div class="flow-step">
                     <div class="flow-icon">📊</div>
                     <strong>Analyze</strong>
-                    <span>InsightED turns verified data into dashboards, maps, metrics, summaries, and program-level monitoring signals.</span>
+                    <span>InsightED turns verified data into dashboards, maps, metrics, summaries, and program-level
+                        monitoring signals.</span>
                 </div>
                 <div class="flow-step">
                     <div class="flow-icon">🎯</div>
                     <strong>Decide</strong>
-                    <span>Leaders use those signals to guide allocation, follow-up, reporting, policy, and operational action.</span>
+                    <span>Leaders use those signals to guide allocation, follow-up, reporting, policy, and operational
+                        action.</span>
                 </div>
             </div>
 
             <h2>Strategic roadmap</h2>
             <div class="roadmap">
                 <div class="roadmap-card">
-                    <h3><span class="year-badge">2026</span><span class="roadmap-title">Stabilization and role coverage</span></h3>
+                    <h3><span class="year-badge">2026</span><span class="roadmap-title">Stabilization and role
+                            coverage</span></h3>
                     <ul>
                         <li>Stabilize school head and engineer workflows.</li>
                         <li>Finish RO/SDO monitoring and SIIF usability.</li>
@@ -1686,7 +1988,8 @@
                     </ul>
                 </div>
                 <div class="roadmap-card">
-                    <h3><span class="year-badge">2027</span><span class="roadmap-title">Predictive intelligence</span></h3>
+                    <h3><span class="year-badge">2027</span><span class="roadmap-title">Predictive intelligence</span>
+                    </h3>
                     <ul>
                         <li>Use accumulated records for predictive models.</li>
                         <li>Add risk scoring for delays, shortages, and disasters.</li>
@@ -1707,21 +2010,30 @@
         </section>
 
         <section id="panel-schoolProfile" class="section-panel">
-            <h2>School Profile Data Elements</h2>
+            <div class="section-heading-row">
+                <h2>School Profile Data Elements</h2>
+                <a class="section-link-btn" href="School-Head.html.html">
+                    <span>View InsightED for School Heads</span>
+                    <span>↗</span>
+                </a>
+            </div>
             <p class="section-lead">
-                This view summarizes the main information collected from School Head submissions. It organizes school profile, learner, class, resource, facility, location, safety, and progress details in plain language.
+                This view summarizes the main information collected from School Head submissions. It organizes school
+                profile, learner, class, resource, facility, location, safety, and progress details in plain language.
             </p>
 
             <div class="dictionary-summary">
                 <div class="card">
                     <div class="icon">🏫</div>
                     <h3>Canonical Record</h3>
-                    <p>The main school record stores school identity, enrollment, learner profile, class modality, resources, facilities, location, and completion progress.</p>
+                    <p>The main school record stores school identity, enrollment, learner profile, class modality,
+                        resources, facilities, location, and completion progress.</p>
                 </div>
                 <div class="card">
                     <div class="icon">🧾</div>
                     <h3>Data Strategy</h3>
-                    <p>Detailed supporting records keep facilities, location, ownership files, uploaded evidence, performance logs, and audit feedback organized for reporting.</p>
+                    <p>Detailed supporting records keep facilities, location, ownership files, uploaded evidence,
+                        performance logs, and audit feedback organized for reporting.</p>
                 </div>
             </div>
 
@@ -1733,57 +2045,139 @@
                 </tr>
                 <tr>
                     <td>Core Identifiers</td>
-                    <td><ul class="element-list"><li>Unique school record number</li><li>Official DepEd School ID</li><li>Date the school record was created</li><li>Date the school record was last updated</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Unique school record number</li>
+                            <li>Official DepEd School ID</li>
+                            <li>Date the school record was created</li>
+                            <li>Date the school record was last updated</li>
+                        </ul>
+                    </td>
                     <td>Defines record uniqueness and synchronization metadata.</td>
                 </tr>
                 <tr>
                     <td>Unit 1: School Identity</td>
-                    <td><ul class="element-list"><li>School name</li><li>Region, division, and district</li><li>Map location coordinates</li><li>School head or principal</li><li>Land or building ownership status</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>School name</li>
+                            <li>Region, division, and district</li>
+                            <li>Map location coordinates</li>
+                            <li>School head or principal</li>
+                            <li>Land or building ownership status</li>
+                        </ul>
+                    </td>
                     <td>Stores school location, leadership, curricular, ownership, and establishment profile.</td>
                 </tr>
                 <tr>
                     <td>Unit 2: Learners</td>
-                    <td><ul class="element-list"><li>Total number of learners</li><li>Male learner count</li><li>Female learner count</li><li>Enrollment breakdown by grade level and learner group</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Total number of learners</li>
+                            <li>Male learner count</li>
+                            <li>Female learner count</li>
+                            <li>Enrollment breakdown by grade level and learner group</li>
+                        </ul>
+                    </td>
                     <td>Captures enrollment by grade level, gender, and SNED counts.</td>
                 </tr>
                 <tr>
                     <td>Unit 3: Organized Classes</td>
-                    <td><ul class="element-list"><li>Whether the school has multigrade classes</li><li>Number of multigrade sections</li><li>Class and section counts by grade level</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Whether the school has multigrade classes</li>
+                            <li>Number of multigrade sections</li>
+                            <li>Class and section counts by grade level</li>
+                        </ul>
+                    </td>
                     <td>Tracks section counts, class sizes, and multigrade operations.</td>
                 </tr>
                 <tr>
                     <td>Unit 4: Learner Profile</td>
-                    <td><ul class="element-list"><li>Learner groups served by the school</li><li>Nutrition and health status counts</li><li>Alternative Learning System learner counts</li><li>Indigenous Peoples learner count</li><li>Muslim learner or ALIVE program count</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Learner groups served by the school</li>
+                            <li>Nutrition and health status counts</li>
+                            <li>Alternative Learning System learner counts</li>
+                            <li>Indigenous Peoples learner count</li>
+                            <li>Muslim learner or ALIVE program count</li>
+                        </ul>
+                    </td>
                     <td>Captures vulnerable groups, health indicators, ALS, IP, and ALIVE program counts.</td>
                 </tr>
                 <tr>
                     <td>Unit 5: Shifting & Modality</td>
-                    <td><ul class="element-list"><li>Whether the school uses shifting schedules</li><li>Type of class schedule or shifting setup</li><li>Modular distance learning availability</li><li>Online distance learning availability</li><li>Blended learning availability</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Whether the school uses shifting schedules</li>
+                            <li>Type of class schedule or shifting setup</li>
+                            <li>Modular distance learning availability</li>
+                            <li>Online distance learning availability</li>
+                            <li>Blended learning availability</li>
+                        </ul>
+                    </td>
                     <td>Documents delivery modes and school scheduling arrangements.</td>
                 </tr>
                 <tr>
                     <td>Unit 6: School Resources</td>
-                    <td><ul class="element-list"><li>Furniture inventory</li><li>ICT equipment inventory</li><li>Water, sanitation, and hygiene facilities</li><li>Electricity, water, and connectivity status</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Furniture inventory</li>
+                            <li>ICT equipment inventory</li>
+                            <li>Water, sanitation, and hygiene facilities</li>
+                            <li>Electricity, water, and connectivity status</li>
+                        </ul>
+                    </td>
                     <td>Tracks furniture, ICT, WASH, utilities, and non-building school assets.</td>
                 </tr>
                 <tr>
                     <td>Unit 7: Facilities</td>
-                    <td><ul class="element-list"><li>Building inventory</li><li>Room inventory</li><li>Available buildable spaces</li><li>Detailed building records</li><li>Repair needs and recommended actions</li><li>Condemned or demolition-tagged structures</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Building inventory</li>
+                            <li>Room inventory</li>
+                            <li>Available buildable spaces</li>
+                            <li>Detailed building records</li>
+                            <li>Repair needs and recommended actions</li>
+                            <li>Condemned or demolition-tagged structures</li>
+                        </ul>
+                    </td>
                     <td>Maintains building, room, repair, demolition, and buildable-space records.</td>
                 </tr>
                 <tr>
                     <td>Unit 8: Terrain</td>
-                    <td><ul class="element-list"><li>School location profile</li><li>Transportation options to reach the school</li><li>Road access and paving condition</li><li>Hazards and calamities affecting the school</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>School location profile</li>
+                            <li>Transportation options to reach the school</li>
+                            <li>Road access and paving condition</li>
+                            <li>Hazards and calamities affecting the school</li>
+                        </ul>
+                    </td>
                     <td>Stores access, terrain, hazard, and proximity information.</td>
                 </tr>
                 <tr>
                     <td>Unit 9: Safety Audit</td>
-                    <td><ul class="element-list"><li>General safety observations</li><li>Electrical wiring condition</li><li>Fire exit availability</li><li>Working fire extinguisher count</li><li>Safety remarks and notes</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>General safety observations</li>
+                            <li>Electrical wiring condition</li>
+                            <li>Fire exit availability</li>
+                            <li>Working fire extinguisher count</li>
+                            <li>Safety remarks and notes</li>
+                        </ul>
+                    </td>
                     <td>Tracks safety markers, wiring, fire exits, extinguishers, and remarks.</td>
                 </tr>
                 <tr>
                     <td>Monitoring</td>
-                    <td><ul class="element-list"><li>Progress for each School Head unit</li><li>Overall unit completion score</li><li>Total completion percentage</li><li>Last update date for each unit</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Progress for each School Head unit</li>
+                            <li>Overall unit completion score</li>
+                            <li>Total completion percentage</li>
+                            <li>Last update date for each unit</li>
+                        </ul>
+                    </td>
                     <td>Measures school-head submission progress and completion status.</td>
                 </tr>
             </table>
@@ -1792,19 +2186,23 @@
         <section id="panel-infrastructure" class="section-panel">
             <h2>Infrastructure Data Elements</h2>
             <p class="section-lead">
-                This view summarizes the main information used by Division Engineers to monitor infrastructure projects. It organizes project details, photo evidence, uploaded files, user access, required documents, and progress updates in plain language.
+                This view summarizes the main information used by Division Engineers to monitor infrastructure projects.
+                It organizes project details, photo evidence, uploaded files, user access, required documents, and
+                progress updates in plain language.
             </p>
 
             <div class="dictionary-summary">
                 <div class="card">
                     <div class="icon">🏗️</div>
                     <h3>Project Master Record</h3>
-                    <p>The main project record stores each infrastructure project’s identity, school, location, budget, contractor, phase, and progress details.</p>
+                    <p>The main project record stores each infrastructure project’s identity, school, location, budget,
+                        contractor, phase, and progress details.</p>
                 </div>
                 <div class="card">
                     <div class="icon">📸</div>
                     <h3>Evidence & Documents</h3>
-                    <p>Supporting records store project photos, required documents, file details, upload history, and evidence metadata.</p>
+                    <p>Supporting records store project photos, required documents, file details, upload history, and
+                        evidence metadata.</p>
                 </div>
             </div>
 
@@ -1816,38 +2214,101 @@
                 </tr>
                 <tr>
                     <td>Infrastructure Project Record</td>
-                    <td><ul class="element-list"><li>Project record number</li><li>InsightED project tracking code</li><li>Project name</li><li>School name and School ID</li><li>Region and division</li><li>Project category</li><li>Current construction phase</li><li>Reported accomplishment percentage</li></ul></td>
-                    <td>Master project record for infrastructure creation, monitoring, assignment, geotagging, budget, contractor, completion, and triangulated progress.</td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Project record number</li>
+                            <li>InsightED project tracking code</li>
+                            <li>Project name</li>
+                            <li>School name and School ID</li>
+                            <li>Region and division</li>
+                            <li>Project category</li>
+                            <li>Current construction phase</li>
+                            <li>Reported accomplishment percentage</li>
+                        </ul>
+                    </td>
+                    <td>Master project record for infrastructure creation, monitoring, assignment, geotagging, budget,
+                        contractor, completion, and triangulated progress.</td>
                 </tr>
                 <tr>
                     <td>Project Photo Evidence</td>
-                    <td><ul class="element-list"><li>Image record number</li><li>Linked project</li><li>Photo category</li><li>File location</li><li>Stored image file reference</li><li>Photo geotag location</li><li>Date and time the photo was taken</li><li>Person who uploaded the photo</li><li>Camera and image metadata</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Image record number</li>
+                            <li>Linked project</li>
+                            <li>Photo category</li>
+                            <li>File location</li>
+                            <li>Stored image file reference</li>
+                            <li>Photo geotag location</li>
+                            <li>Date and time the photo was taken</li>
+                            <li>Person who uploaded the photo</li>
+                            <li>Camera and image metadata</li>
+                        </ul>
+                    </td>
                     <td>Stores photographic evidence for COA-compliant progress reporting and site validation.</td>
                 </tr>
                 <tr>
                     <td>Uploaded Files and Documents</td>
-                    <td><ul class="element-list"><li>File record number</li><li>File fingerprint for duplicate checking</li><li>Stored file content</li><li>File type</li><li>File size</li><li>Date the file was stored</li></ul></td>
-                    <td>Centralized blob storage for high-resolution photos, PDFs, evidence files, and deduplicated binary assets.</td>
+                    <td>
+                        <ul class="element-list">
+                            <li>File record number</li>
+                            <li>File fingerprint for duplicate checking</li>
+                            <li>Stored file content</li>
+                            <li>File type</li>
+                            <li>File size</li>
+                            <li>Date the file was stored</li>
+                        </ul>
+                    </td>
+                    <td>Centralized blob storage for high-resolution photos, PDFs, evidence files, and deduplicated
+                        binary assets.</td>
                 </tr>
                 <tr>
                     <td>Engineer User Accounts</td>
-                    <td><ul class="element-list"><li>User account number</li><li>Official email address</li><li>User role</li><li>Full name</li><li>Region and division assignment</li><li>Account category</li><li>Secondary access passcode</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>User account number</li>
+                            <li>Official email address</li>
+                            <li>User role</li>
+                            <li>Full name</li>
+                            <li>Region and division assignment</li>
+                            <li>Account category</li>
+                            <li>Secondary access passcode</li>
+                        </ul>
+                    </td>
                     <td>Stores Division Engineer profile, authentication, role, and administrative scope.</td>
                 </tr>
                 <tr>
                     <td>Project Update History</td>
-                    <td><ul class="element-list"><li>Update record number</li><li>Linked project tracking code</li><li>Updated accomplishment percentage</li><li>Updated project status</li><li>Person who made the update</li><li>Date the update was submitted</li></ul></td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Update record number</li>
+                            <li>Linked project tracking code</li>
+                            <li>Updated accomplishment percentage</li>
+                            <li>Updated project status</li>
+                            <li>Person who made the update</li>
+                            <li>Date the update was submitted</li>
+                        </ul>
+                    </td>
                     <td>Transactional history of project status and accomplishment updates submitted by engineers.</td>
                 </tr>
                 <tr>
                     <td>Project Required Documents</td>
-                    <td><ul class="element-list"><li>Document record number</li><li>Linked project</li><li>Program of Works file</li><li>DUPA file</li><li>Contract file</li></ul></td>
-                    <td>Maps mandatory project PDFs such as Program of Works, DUPA, and contracts to binary storage records.</td>
+                    <td>
+                        <ul class="element-list">
+                            <li>Document record number</li>
+                            <li>Linked project</li>
+                            <li>Program of Works file</li>
+                            <li>DUPA file</li>
+                            <li>Contract file</li>
+                        </ul>
+                    </td>
+                    <td>Maps mandatory project PDFs such as Program of Works, DUPA, and contracts to binary storage
+                        records.</td>
                 </tr>
             </table>
 
             <div class="callout">
-                <strong>Data integrity rule:</strong> A project should not be marked as completed unless the actual completion date is recorded and at least one external completion photo is available.
+                <strong>Data integrity rule:</strong> A project should not be marked as completed unless the actual
+                completion date is recorded and at least one external completion photo is available.
             </div>
         </section>
 
@@ -1870,6 +2331,18 @@
                     { value: "7", label: "InsightED-related repositories reviewed" },
                     { value: "PWA", label: "Offline-first school and field workflows" },
                     { value: "STRIDE", label: "Strategic analytics and decision support" }
+                ]
+            },
+            features: {
+                eyebrow: "Salient platform features",
+                title: "Insight<span class=\"title-red\">ED</span> turns school submissions into <span class=\"title-red\">clean, monitored, dashboard-ready data</span>.",
+                description:
+                    "This view highlights the platform capabilities that make InsightED useful for real-time data collection, real-time monitoring, direct dashboards, validation, announcements, modular rollout, and offline field use.",
+                stats: [
+                    { value: "Real-time", label: "School updates and RO/SDO monitoring" },
+                    { value: "Clean data", label: "Typed records, validation, and input restrictions" },
+                    { value: "Dashboards", label: "Submissions flow directly to monitoring views" },
+                    { value: "Offline", label: "PWA cache support for low-connectivity work" }
                 ]
             },
             modules: {
@@ -2065,4 +2538,5 @@
         updateHero("overview");
     </script>
 </body>
+
 </html>

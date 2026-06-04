@@ -1,0 +1,2249 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InsightED | Infrastructure Progress Monitoring System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-tertiary: #f1f5f9;
+            --primary-blue: #0a4b9c; /* DepEd Navy Blue */
+            --primary-blue-glow: rgba(10, 75, 156, 0.08);
+            --accent-yellow: #fadb5f; /* DepEd Yellow/Gold */
+            --accent-red: #e12b3c; /* DepEd Red */
+            --accent-green: #10b981;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(10, 75, 156, 0.08);
+            --sidebar-width: 320px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-tertiary) transparent;
+        }
+
+        *::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        *::-webkit-scrollbar-thumb {
+            background-color: var(--bg-tertiary);
+            border-radius: 20px;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            background-image: 
+                radial-gradient(circle at 5% 5%, rgba(10, 75, 156, 0.03) 0%, transparent 35%),
+                radial-gradient(circle at 95% 95%, rgba(225, 43, 60, 0.02) 0%, transparent 35%);
+            background-attachment: fixed;
+        }
+
+        /* Blueprint grid helper overlay */
+        .blueprint-grid {
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(10, 75, 156, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(10, 75, 156, 0.02) 1px, transparent 1px);
+            background-size: 30px 30px;
+            z-index: -2;
+            pointer-events: none;
+        }
+
+        /* Ambient glowing circles */
+        .glowing-orb {
+            position: fixed;
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(10, 75, 156, 0.04) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: -1;
+            pointer-events: none;
+            top: 10%;
+            left: 15%;
+            animation: orbMove 35s infinite alternate ease-in-out;
+        }
+
+        .glowing-orb.secondary {
+            background: radial-gradient(circle, rgba(225, 43, 60, 0.035) 0%, transparent 70%);
+            top: 55%;
+            left: 60%;
+            animation: orbMoveSecondary 45s infinite alternate ease-in-out;
+        }
+
+        @keyframes orbMove {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(25vw, 15vh) scale(1.2); }
+        }
+
+        @keyframes orbMoveSecondary {
+            0% { transform: translate(0, 0) scale(1.2); }
+            100% { transform: translate(-25vw, -15vh) scale(0.95); }
+        }
+
+        /* Left Presentation Sidebar Menu */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            position: fixed;
+            left: 40px;
+            top: 40px;
+            bottom: 40px;
+            height: calc(100vh - 80px);
+            display: flex;
+            flex-direction: column;
+            z-index: 10;
+            box-shadow: 0 16px 48px rgba(10, 75, 156, 0.03);
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .sidebar-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--glass-border);
+            border-radius: 24px 24px 0 0;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: rgba(10, 75, 156, 0.02);
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .sidebar-header:hover {
+            background: rgba(10, 75, 156, 0.06);
+        }
+
+        .sidebar-logo {
+            width: 38px;
+            height: 38px;
+            background: linear-gradient(135deg, var(--primary-blue), var(--accent-red));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            font-weight: 800;
+        }
+
+        .sidebar-header-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-brand {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary-blue);
+        }
+
+        .sidebar-sub {
+            font-size: 9px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            color: var(--text-muted);
+        }
+
+        .slides-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .slide-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+
+        .slide-link:hover {
+            background: var(--bg-tertiary);
+            color: var(--text-main);
+        }
+
+        .slide-link.active {
+            background: var(--primary-blue-glow);
+            color: var(--primary-blue);
+            border-color: rgba(10, 75, 156, 0.12);
+        }
+
+        .slide-number {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            font-size: 11px;
+            background: var(--bg-tertiary);
+            color: var(--text-muted);
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+        }
+
+        .slide-link.active .slide-number {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        /* Sidebar Footer Banner */
+        .sidebar-footer {
+            padding: 16px 20px;
+            border-top: 1px solid var(--glass-border);
+            border-radius: 0 0 24px 24px;
+            font-size: 10px;
+            color: var(--text-muted);
+            background: rgba(10, 75, 156, 0.01);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        /* Presentation Viewer Main Area */
+        .presentation-viewer {
+            margin-left: calc(var(--sidebar-width) + 40px);
+            flex: 1;
+            padding: 40px 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            min-height: 100vh;
+            transition: margin-left 0.35s cubic-bezier(0.16, 1, 0.3, 1), padding 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Landing Mode (Slide 1 Active) */
+        body.landing-mode .sidebar {
+            transform: translateX(-100%);
+        }
+
+        body.landing-mode .presentation-viewer {
+            margin-left: 0;
+            padding: 40px 80px;
+        }
+
+        /* Slide Content Section Container */
+        .slide-canvas {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 48px;
+            box-shadow: 0 16px 48px rgba(10, 75, 156, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            display: none;
+            animation: slideIn 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .slide-canvas.active {
+            display: flex;
+            flex-direction: column;
+        }
+
+        @keyframes slideIn {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.985) translateY(12px); 
+                filter: blur(4px);
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1) translateY(0); 
+                filter: blur(0);
+            }
+        }
+
+        /* Slide Header & Metadata styling */
+        .slide-header {
+            margin-bottom: 32px;
+            border-bottom: 2px solid var(--bg-tertiary);
+            padding-bottom: 20px;
+            position: relative;
+        }
+
+        .slide-badge {
+            display: inline-flex;
+            align-items: center;
+            background: var(--primary-blue-glow);
+            color: var(--primary-blue);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(10, 75, 156, 0.12);
+        }
+
+        .slide-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            letter-spacing: -0.75px;
+            line-height: 1.2;
+        }
+
+        .slide-title span {
+            color: var(--accent-red);
+        }
+
+        .slide-subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-top: 6px;
+            font-weight: 500;
+        }
+
+        .slide-body {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Custom Slides Layout grids & elements */
+        .slide-cover-layout {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 400px;
+            position: relative;
+        }
+
+        .slide-cover-layout::before {
+            content: '';
+            position: absolute;
+            width: 380px;
+            height: 380px;
+            background: radial-gradient(circle, rgba(10, 75, 156, 0.07) 0%, transparent 70%);
+            z-index: -1;
+            top: -20px;
+            animation: pulseGlow 10s infinite alternate ease-in-out;
+        }
+
+        @keyframes pulseGlow {
+            0% { transform: scale(0.85); opacity: 0.7; }
+            100% { transform: scale(1.15); opacity: 1; }
+        }
+
+        .logo-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .deped-seal {
+            font-size: 44px;
+            filter: drop-shadow(0 4px 12px rgba(10, 75, 156, 0.15));
+        }
+
+        .hero-big-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 54px;
+            font-weight: 900;
+            color: var(--primary-blue);
+            line-height: 1.1;
+            letter-spacing: -1.5px;
+            max-width: 800px;
+            margin-bottom: 12px;
+        }
+
+        .hero-big-title span {
+            color: var(--accent-red);
+        }
+
+        .hero-tagline {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 36px;
+        }
+
+        .divider-red-yellow {
+            width: 180px;
+            height: 5px;
+            background: linear-gradient(90deg, var(--primary-blue) 0%, var(--primary-blue) 33.3%, var(--accent-yellow) 33.3%, var(--accent-yellow) 66.6%, var(--accent-red) 66.6%, var(--accent-red) 100%);
+            border-radius: 20px;
+            margin: 28px auto 36px;
+        }
+
+        .slide-cover-layout p {
+            font-size: 14px;
+            color: var(--text-muted);
+            max-width: 580px;
+            line-height: 1.6;
+        }
+
+        /* 3-Column Features Grid */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 8px 24px rgba(10, 75, 156, 0.02);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--primary-blue);
+            box-shadow: 0 16px 36px rgba(10, 75, 156, 0.08);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(10, 75, 156, 0.01) 100%);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--primary-blue);
+            border-radius: 20px 20px 0 0;
+            opacity: 0.15;
+            transition: opacity 0.3s;
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-card-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .feature-card-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Workflow Flow Line Chart */
+        .workflow-line {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 32px;
+            margin-top: 24px;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .workflow-line {
+                flex-direction: column;
+                gap: 32px;
+            }
+        }
+
+        .workflow-node {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+
+        .workflow-node-num {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--bg-tertiary);
+            border: 2.5px solid var(--glass-border);
+            font-family: 'Outfit', sans-serif;
+            font-weight: 700;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .workflow-node:hover .workflow-node-num {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 10px var(--primary-blue-glow);
+        }
+
+        .workflow-node-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .workflow-line-bg {
+            position: absolute;
+            left: 10%;
+            right: 10%;
+            top: 50px;
+            height: 3px;
+            background: var(--bg-tertiary);
+            z-index: 1;
+        }
+
+        .workflow-progress-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--primary-blue);
+            animation: progressFill 12s infinite linear;
+        }
+
+        .workflow-dot {
+            position: absolute;
+            left: 0;
+            top: -4.5px;
+            width: 12px;
+            height: 12px;
+            background: var(--primary-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(10, 75, 156, 0.6);
+            animation: moveDot 12s infinite linear;
+            z-index: 3;
+        }
+
+        @keyframes moveDot {
+            0% { left: 0%; opacity: 1; }
+            85% { left: 100%; opacity: 1; }
+            95% { left: 100%; opacity: 1; }
+            98% { left: 100%; opacity: 0; }
+            99% { left: 0%; opacity: 0; }
+            100% { left: 0%; opacity: 1; }
+        }
+
+        @keyframes progressFill {
+            0% { width: 0%; opacity: 1; }
+            85% { width: 100%; opacity: 1; }
+            95% { width: 100%; opacity: 1; }
+            98% { width: 100%; opacity: 0; }
+            99% { width: 0%; opacity: 0; }
+            100% { width: 0%; opacity: 1; }
+        }
+
+        /* Coordinated node animations matching the 12s progress loop with pause at Node 4 */
+        #wf-node-1 .workflow-node-num {
+            background: var(--primary-blue) !important;
+            color: white !important;
+            border-color: var(--primary-blue) !important;
+            box-shadow: 0 0 8px var(--primary-blue-glow);
+        }
+
+        #wf-node-2 .workflow-node-num {
+            animation: nodeActive2 12s infinite linear;
+        }
+
+        #wf-node-3 .workflow-node-num {
+            animation: nodeActive3 12s infinite linear;
+        }
+
+        #wf-node-4 .workflow-node-num {
+            animation: nodeActive4 12s infinite linear;
+        }
+
+        @keyframes nodeActive2 {
+            0%, 27.9% { background: var(--bg-tertiary); color: var(--text-muted); border-color: var(--glass-border); box-shadow: none; }
+            28.3%, 98% { background: var(--primary-blue); color: white; border-color: var(--primary-blue); box-shadow: 0 0 8px var(--primary-blue-glow); }
+            98.1%, 100% { background: var(--bg-tertiary); color: var(--text-muted); border-color: var(--glass-border); box-shadow: none; }
+        }
+
+        @keyframes nodeActive3 {
+            0%, 56.2% { background: var(--bg-tertiary); color: var(--text-muted); border-color: var(--glass-border); box-shadow: none; }
+            56.6%, 98% { background: var(--primary-blue); color: white; border-color: var(--primary-blue); box-shadow: 0 0 8px var(--primary-blue-glow); }
+            98.1%, 100% { background: var(--bg-tertiary); color: var(--text-muted); border-color: var(--glass-border); box-shadow: none; }
+        }
+
+        @keyframes nodeActive4 {
+            0%, 84.6% { background: var(--bg-tertiary); color: var(--text-muted); border-color: var(--glass-border); box-shadow: none; }
+            85%, 98% { background: var(--accent-green); color: white; border-color: var(--accent-green); box-shadow: 0 0 10px rgba(16, 185, 129, 0.5); }
+            98.1%, 100% { background: var(--bg-tertiary); color: var(--text-muted); border-color: var(--glass-border); box-shadow: none; }
+        }
+
+        /* 4-Block Grid Layout */
+        .blocks-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .block-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            display: flex;
+            gap: 20px;
+            box-shadow: 0 8px 24px rgba(10, 75, 156, 0.02);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .block-card:hover {
+            transform: translateY(-6px) scale(1.02);
+            border-color: var(--primary-blue);
+            box-shadow: 0 16px 36px rgba(10, 75, 156, 0.08);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(10, 75, 156, 0.01) 100%);
+        }
+
+        .block-badge-num {
+            font-family: 'Outfit', sans-serif;
+            font-size: 13px;
+            font-weight: 800;
+            color: white;
+            padding: 8px 14px;
+            border-radius: 12px;
+            height: 38px;
+            width: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .block-content h4 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--primary-blue);
+        }
+
+        .block-content p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Split Screen (Left Content / Right Device mock) */
+        .split-content {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 36px;
+            align-items: center;
+        }
+
+        @media (max-width: 992px) {
+            .split-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Interactive Phone View Mock */
+        .phone-frame {
+            border: 12px solid #1e293b;
+            border-radius: 36px;
+            height: 480px;
+            background: #0f172a;
+            max-width: 260px;
+            width: 100%;
+            margin: 0 auto;
+            box-shadow: 0 20px 48px rgba(0,0,0,0.15);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Container for GIFs that already have a phone frame built-in */
+        .phone-gif-container {
+            height: 480px;
+            max-width: 260px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .phone-gif-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .phone-notch {
+            height: 16px;
+            background: #1e293b;
+            width: 100px;
+            border-radius: 0 0 10px 10px;
+            margin: 0 auto;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+        }
+
+        .phone-screen {
+            flex: 1;
+            padding: 24px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            background-image: linear-gradient(185deg, #1e3a8a 0%, #0f172a 100%);
+        }
+
+        .phone-logo {
+            width: 60px;
+            height: 60px;
+            background: white;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .phone-title {
+            font-family: 'Outfit', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+            margin-bottom: 4px;
+        }
+
+        .phone-subtitle {
+            font-size: 9px;
+            color: var(--accent-yellow);
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+
+        .phone-btn {
+            background: white;
+            color: var(--primary-blue);
+            border: none;
+            padding: 10px 20px;
+            font-size: 11px;
+            font-weight: 800;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.2s;
+        }
+
+        .phone-btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Checkbox checklist list */
+        .check-list-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            padding: 18px 24px;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(10, 75, 156, 0.01);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .check-item:hover {
+            transform: translateY(-3px) scale(1.01);
+            border-color: var(--primary-blue);
+            box-shadow: 0 8px 20px rgba(10, 75, 156, 0.05);
+        }
+
+        .check-item-icon {
+            color: var(--primary-blue);
+            font-size: 16px;
+            margin-top: 2px;
+        }
+
+        .check-item-text strong {
+            display: block;
+            font-size: 13.5px;
+            color: var(--text-main);
+            margin-bottom: 2px;
+        }
+
+        .check-item-text p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Categories Lists grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        @media (max-width: 900px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .category-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 24px rgba(10, 75, 156, 0.02);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .category-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary-blue);
+            box-shadow: 0 12px 28px rgba(10, 75, 156, 0.06);
+        }
+
+        .category-card-header {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 1.5px solid var(--bg-tertiary);
+            padding-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .category-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .category-list-item {
+            font-size: 12.5px;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .category-list-item::before {
+            content: '●';
+            color: var(--accent-red);
+            font-size: 10px;
+        }
+
+        .callout-box {
+            background: rgba(225, 43, 60, 0.04);
+            border-left: 4px solid var(--accent-red);
+            border-radius: 0 12px 12px 0;
+            padding: 16px 20px;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+
+        .callout-icon {
+            font-size: 20px;
+        }
+
+        .callout-content h5 {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--accent-red);
+            margin-bottom: 4px;
+        }
+
+        .callout-content p {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        /* Verification Gate Demo Widget */
+        .verification-widget {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
+            margin-top: 16px;
+        }
+
+        .verification-header-banner {
+            border-radius: 12px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .verification-header-banner.locked {
+            background: rgba(225, 43, 60, 0.06);
+            border: 1px solid rgba(225, 43, 60, 0.15);
+            color: var(--accent-red);
+        }
+
+        .verification-header-banner.unlocked {
+            background: rgba(16, 185, 129, 0.06);
+            border: 1px solid rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+
+        .inputs-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .inputs-row {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .date-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .date-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--text-muted);
+        }
+
+        .date-field {
+            background: var(--bg-tertiary);
+            border: 1.5px solid transparent;
+            border-radius: 8px;
+            padding: 10px;
+            font-size: 13px;
+            color: var(--text-main);
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .date-field:focus {
+            border-color: var(--primary-blue);
+        }
+
+        /* Staircase flow diagram styling */
+        .staircase-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .stair-step {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            padding: 18px 28px;
+            border-radius: 16px;
+            position: relative;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: 0 4px 12px rgba(10, 75, 156, 0.01);
+        }
+
+        .stair-step:hover {
+            transform: translateX(8px) scale(1.01);
+            border-color: var(--primary-blue);
+            box-shadow: 0 8px 20px rgba(10, 75, 156, 0.05);
+        }
+
+        .stair-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary-blue), #2563eb);
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(10, 75, 156, 0.2);
+            flex-shrink: 0;
+        }
+
+        .stair-text strong {
+            font-size: 13.5px;
+            color: var(--text-main);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .stair-text span {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Progress Matrix checklist */
+        .progress-calculator-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 32px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 900px) {
+            .progress-calculator-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .matrix-th {
+            text-align: left;
+            padding: 12px;
+            font-size: 10px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            border-bottom: 1.5px solid var(--glass-border);
+            font-weight: 700;
+        }
+
+        .matrix-tr {
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.2s;
+        }
+
+        .matrix-tr.checked {
+            background: rgba(10, 75, 156, 0.02);
+        }
+
+        .matrix-td {
+            padding: 12px;
+            font-size: 12.5px;
+        }
+
+        /* Checkbox styling */
+        .checkbox-container {
+            display: inline-block;
+            position: relative;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .checkbox-container input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .checkbox-element {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 20px;
+            width: 20px;
+            background-color: var(--bg-tertiary);
+            border: 2px solid var(--glass-border);
+            border-radius: 5px;
+            transition: all 0.2s;
+        }
+
+        .checkbox-container input:checked ~ .checkbox-element {
+            background-color: var(--primary-blue);
+            border-color: var(--primary-blue);
+        }
+
+        .checkbox-element:after {
+            content: "";
+            position: absolute;
+            display: none;
+            left: 6px;
+            top: 2px;
+            width: 4px;
+            height: 9px;
+            border: solid white;
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg);
+        }
+
+        .checkbox-container input:checked ~ .checkbox-element:after {
+            display: block;
+        }
+
+        .progress-outcome-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .progress-circle-meter {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: radial-gradient(closest-side, white 79%, transparent 80% 100%),
+                        conic-gradient(var(--primary-blue) 0%, var(--bg-tertiary) 0%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Outfit', sans-serif;
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            box-shadow: 0 4px 16px rgba(10, 75, 156, 0.08);
+            margin-bottom: 20px;
+        }
+
+        .progress-meter-bar-fill {
+            width: 100%;
+            height: 8px;
+            background: var(--bg-tertiary);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 12px;
+        }
+
+        .progress-fill-line {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-blue);
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+
+        /* Evidence uploader mockup */
+        .evidence-demo-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .evidence-demo-box {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .uploader-button {
+            border: 2.5px dashed rgba(10, 75, 156, 0.15);
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .uploader-button:hover {
+            border-color: var(--primary-blue);
+            background: var(--bg-tertiary);
+        }
+
+        .uploader-button span {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            display: block;
+            margin-top: 10px;
+        }
+
+        .photo-result-frame {
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            position: relative;
+            height: 160px;
+            display: none;
+            background: #000;
+        }
+
+        .photo-result-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.85;
+        }
+
+        .meta-tag-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(4px);
+            padding: 10px 14px;
+            font-size: 8px;
+            color: white;
+            font-family: monospace;
+            line-height: 1.4;
+        }
+
+        /* 3 Columns Metrics (Slide 10) */
+        .metrics-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 16px;
+        }
+
+        @media (max-width: 768px) {
+            .metrics-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 36px 28px;
+            text-align: center;
+            box-shadow: 0 8px 24px rgba(10, 75, 156, 0.02);
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .metric-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--primary-blue);
+            box-shadow: 0 16px 40px rgba(10, 75, 156, 0.08);
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, rgba(10, 75, 156, 0.01) 100%);
+        }
+
+        .metric-icon {
+            font-size: 36px;
+            margin-bottom: 20px;
+            display: inline-block;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08));
+            transition: transform 0.3s;
+        }
+
+        .metric-card:hover .metric-icon {
+            transform: scale(1.15) rotate(5deg);
+        }
+
+        .metric-card h4 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 16px;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 12px;
+        }
+
+        .metric-card p {
+            font-size: 12.5px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+
+        /* Navigation Controls Bottom Bar */
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 32px;
+            padding-top: 20px;
+            border-top: 1px solid var(--bg-tertiary);
+        }
+
+        .nav-btn {
+            background: var(--bg-secondary);
+            border: 1px solid var(--glass-border);
+            color: var(--primary-blue);
+            font-weight: 700;
+            font-size: 12px;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn:hover {
+            background: var(--bg-tertiary);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-btn:active {
+            transform: translateY(0);
+        }
+
+        .nav-btn.primary {
+            background: var(--primary-blue);
+            color: white;
+            border-color: var(--primary-blue);
+            box-shadow: 0 4px 12px rgba(10, 75, 156, 0.15);
+        }
+
+        .nav-btn.primary:hover {
+            background: #083c7d;
+            box-shadow: 0 8px 20px rgba(10, 75, 156, 0.3);
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .nav-btn.primary:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        /* Mobile Menu Toggle Button */
+        .menu-toggle-btn {
+            display: none;
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(10, 75, 156, 0.2);
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .menu-toggle-btn:hover {
+            background: #083c7d;
+            transform: scale(1.05);
+            box-shadow: 0 6px 16px rgba(10, 75, 156, 0.3);
+        }
+
+        .menu-toggle-btn:active {
+            transform: scale(0.95);
+        }
+
+        body.landing-mode .menu-toggle-btn {
+            display: none !important;
+        }
+
+        /* Responsive Breakpoints & Adaptability */
+        @media (max-width: 1024px) {
+            .menu-toggle-btn {
+                display: flex;
+            }
+            .sidebar {
+                transform: translateX(-100%);
+                left: 0;
+                top: 0;
+                bottom: 0;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+                border: none;
+                border-right: 1px solid var(--glass-border);
+            }
+            .presentation-viewer {
+                margin-left: 0 !important;
+                padding: 24px 20px !important;
+            }
+            body.sidebar-open .sidebar {
+                transform: translateX(0);
+            }
+            body.sidebar-open .blueprint-grid {
+                z-index: 9;
+            }
+            /* Add backdrop overlay when sidebar is open on mobile */
+            body.sidebar-open::after {
+                content: '';
+                position: fixed;
+                inset: 0;
+                background: rgba(15, 23, 42, 0.4);
+                backdrop-filter: blur(4px);
+                z-index: 8;
+                pointer-events: auto;
+            }
+            .slide-canvas {
+                padding: 28px 20px !important;
+                margin-top: 36px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .slide-title {
+                font-size: 24px !important;
+            }
+            .hero-big-title {
+                font-size: 32px !important;
+            }
+            .slide-subtitle {
+                font-size: 12px !important;
+            }
+            .split-content {
+                grid-template-columns: 1fr !important;
+                gap: 24px;
+            }
+            .matrix-table {
+                font-size: 11px;
+            }
+            .matrix-td {
+                padding: 8px 4px !important;
+            }
+            .progress-calculator-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .phone-gif-container {
+                height: 380px;
+                max-width: 210px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .categories-grid {
+                grid-template-columns: 1fr !important;
+                gap: 12px;
+            }
+            .categories-grid > .category-card {
+                grid-column: span 1 !important;
+            }
+            .nav-controls {
+                flex-direction: column;
+                gap: 12px;
+                align-items: stretch;
+            }
+            .nav-btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body class="landing-mode">
+    <!-- Background grid -->
+    <div class="blueprint-grid"></div>
+    <div class="glowing-orb"></div>
+    <div class="glowing-orb secondary"></div>
+
+    <!-- Mobile Menu Toggle Button -->
+    <button class="menu-toggle-btn" onclick="toggleSidebar()">☰ Menu</button>
+
+    <!-- Sidebar Slide Navigation -->
+    <aside class="sidebar">
+        <div class="sidebar-header" onclick="loadSlide(1)">
+            <img src="https://raw.githubusercontent.com/maiariii/insighted-infra/main/InsightED%20logo.png" alt="InsightED Logo" style="width: 38px; height: 38px; object-fit: contain; border-radius: 8px;">
+            <div class="sidebar-header-title">
+                <span class="sidebar-brand">Insight<span style="color: var(--accent-red);">ED</span></span>
+                <span class="sidebar-sub">Presentation Guide</span>
+            </div>
+        </div>
+
+        <nav class="slides-list">
+            <a class="slide-link" onclick="loadSlide(2)">
+                <span class="slide-number">01</span>
+                <span>Overview &amp; Workflow</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(3)">
+                <span class="slide-number">02</span>
+                <span>How Monitoring Works</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(4)">
+                <span class="slide-number">03</span>
+                <span>Phase 1: Setup &amp; Access</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(5)">
+                <span class="slide-number">04</span>
+                <span>Procurement Requirements</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(6)">
+                <span class="slide-number">05</span>
+                <span>System Gateway (Gate Rule)</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(7)">
+                <span class="slide-number">06</span>
+                <span>Phase 2: Construction</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(8)">
+                <span class="slide-number">07</span>
+                <span>Accomplishment Matrix</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(9)">
+                <span class="slide-number">08</span>
+                <span>Photo Evidence Specs</span>
+            </a>
+            <a class="slide-link" onclick="loadSlide(10)">
+                <span class="slide-number">09</span>
+                <span>Impact &amp; Accountability</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <span>Department of Education</span>
+            <span>Republic of the Philippines</span>
+        </div>
+    </aside>
+
+    <!-- Main Viewer Area -->
+    <main class="presentation-viewer">
+        
+        <!-- Slide 1: Cover -->
+        <section class="slide-canvas active" id="slide-1">
+            <div class="slide-cover-layout">
+                <div class="logo-row" style="margin-bottom: 28px;">
+                    <img src="https://raw.githubusercontent.com/maiariii/insighted-infra/main/InsightED%20logo.png" alt="InsightED Logo" style="height: 90px; width: auto; object-fit: contain;">
+                </div>
+                <h1 class="hero-big-title">Insight<span style="color: var(--accent-red);">ED</span> Infrastructure<br><span>Progress Monitoring</span></h1>
+                <p class="hero-tagline">InsightED Mobile App | From Procurement to Construction Completion</p>
+                <div class="divider-red-yellow"></div>
+                <p style="margin-top: 12px; line-height: 1.7;">
+                    A single mobile workflow to register projects, encode procurement details, and submit verifiable construction progress updates with photo evidence and an objective accomplishment matrix.
+                </p>
+            </div>
+            
+            <div class="nav-controls" style="justify-content: center;">
+                <button class="nav-btn primary" onclick="nextSlide()">Explore System Guide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 2: Overview & Workflow -->
+        <section class="slide-canvas" id="slide-2">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 01</span>
+                <h2 class="slide-title">Overview &amp; <span>Workflow</span></h2>
+                <p class="slide-subtitle">Ensuring transparency, accountability, and audit-ready project histories.</p>
+            </div>
+            
+            <div class="slide-body">
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-card-title">📂 Digital Record</div>
+                        <div class="feature-card-desc">One project = one complete digital record integrating procurement, construction, and physical evidence.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">🚧 Gate Rule</div>
+                        <div class="feature-card-desc">Enforces logic-based unlocking: construction monitoring begins only after validated procurement requirements.</div>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-card-title">📍 Evidence-Based</div>
+                        <div class="feature-card-desc">Progress updates supported by geo-tagged photos and an objective accomplishment checklist.</div>
+                    </div>
+                </div>
+
+                <div class="workflow-line">
+                    <div class="workflow-line-bg">
+                        <div class="workflow-progress-fill"></div>
+                        <div class="workflow-dot"></div>
+                    </div>
+                    <div class="workflow-node" id="wf-node-1">
+                        <div class="workflow-node-num">1</div>
+                        <div class="workflow-node-title">Setup &amp; Access</div>
+                    </div>
+                    <div class="workflow-node" id="wf-node-2">
+                        <div class="workflow-node-num">2</div>
+                        <div class="workflow-node-title">Procurement Encoding</div>
+                    </div>
+                    <div class="workflow-node" id="wf-node-3">
+                        <div class="workflow-node-num">3</div>
+                        <div class="workflow-node-title">Construction Monitoring</div>
+                    </div>
+                    <div class="workflow-node" id="wf-node-4">
+                        <div class="workflow-node-num">4</div>
+                        <div class="workflow-node-title">Completion</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 3: How Monitoring Works -->
+        <section class="slide-canvas" id="slide-3">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 02</span>
+                <h2 class="slide-title">How Progress <span>Monitoring Works</span></h2>
+                <p class="slide-subtitle">An end-to-end digital reporting cycle.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="blocks-grid">
+                    <div class="block-card">
+                        <div class="block-badge-num" style="background: linear-gradient(135deg, #0a4b9c, #2563eb); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);">01</div>
+                        <div class="block-content">
+                            <h4>📱 Setup &amp; Authentication</h4>
+                            <p>Install the PWA, register with official DepEd email (Division Engineers), and grant camera/GPS permissions for field use.</p>
+                        </div>
+                    </div>
+                    <div class="block-card">
+                        <div class="block-badge-num" style="background: linear-gradient(135deg, #d97706, #fadb5f); box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);">02</div>
+                        <div class="block-content">
+                            <h4>📋 Procurement Verification</h4>
+                            <p>Encode full project details and timelines. System validates completeness of procurement details before construction features unlock.</p>
+                        </div>
+                    </div>
+                    <div class="block-card">
+                        <div class="block-badge-num" style="background: linear-gradient(135deg, #e12b3c, #f43f5e); box-shadow: 0 4px 12px rgba(225, 43, 60, 0.25);">03</div>
+                        <div class="block-content">
+                            <h4>🚧 Construction Logs</h4>
+                            <p>Submit project updates and photo documentation directly through the application footprint.</p>
+                        </div>
+                    </div>
+                    <div class="block-card">
+                        <div class="block-badge-num" style="background: linear-gradient(135deg, #10b981, #34d399); box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);">04</div>
+                        <div class="block-content">
+                            <h4>✅ Archival &amp; Completion</h4>
+                            <p>Records lock at 100% accomplishment. Data is archived to ensure reporting integrity and audit readiness.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 4: Phase 1: Setup & Access -->
+        <section class="slide-canvas" id="slide-4">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 03</span>
+                <h2 class="slide-title">Phase 1: <span>Setup &amp; Access</span></h2>
+                <p class="slide-subtitle">Mobile readiness for secure field reporting.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="split-content">
+                    <div class="check-list-items">
+                        <div class="check-item">
+                            <span class="check-item-icon">📱</span>
+                            <div class="check-item-text">
+                                <strong>PWA Installation</strong>
+                                <p>Install directly to your home screen for laptop-free reporting on-site.</p>
+                            </div>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-item-icon">📧</span>
+                            <div class="check-item-text">
+                                <strong>Account Registration</strong>
+                                <p>Restricted to official DepEd emails to ensure traceable ownership.</p>
+                            </div>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-item-icon">📷</span>
+                            <div class="check-item-text">
+                                <strong>Camera Permissions</strong>
+                                <p>Mandatory for evidence capture during progress updates.</p>
+                            </div>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-item-icon">📍</span>
+                            <div class="check-item-text">
+                                <strong>GPS Permissions</strong>
+                                <p>Required for site-based reporting and geo-tag validation.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <!-- Embedded Phone GIF View -->
+                        <div class="phone-gif-container">
+                            <img src="https://raw.githubusercontent.com/maiariii/insighted-infra/main/ppt1.gif" alt="Phase 1: Setup & Access">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 5: Procurement Data Requirements -->
+        <section class="slide-canvas" id="slide-5">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 04</span>
+                <h2 class="slide-title">Procurement <span>Data Requirements</span></h2>
+                <p class="slide-subtitle">Mandatory fields required to unlock the Construction Monitoring tab.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="split-content">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="categories-grid" style="grid-template-columns: 1fr 1fr; gap: 16px;">
+                            <div class="category-card" style="padding: 16px;">
+                                <div class="category-card-header" style="font-size: 12px; margin-bottom: 8px; padding-bottom: 6px;">🆔 ID &amp; Timeline</div>
+                                <ul class="category-list" style="gap: 6px;">
+                                    <li class="category-list-item" style="font-size: 11.5px;">Project ID &amp; Title</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Implementing Unit</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">PCAB License</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">NOA &amp; NTP Dates</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Planned Start &amp; Completion</li>
+                                </ul>
+                            </div>
+                            <div class="category-card" style="padding: 16px;">
+                                <div class="category-card-header" style="font-size: 12px; margin-bottom: 8px; padding-bottom: 6px;">📋 Execution</div>
+                                <ul class="category-list" style="gap: 6px;">
+                                    <li class="category-list-item" style="font-size: 11.5px;">Baseline Schedule</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Invitation to Bid</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Pre-Bid Conference</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Post-Qualification</li>
+                                </ul>
+                            </div>
+                            <div class="category-card" style="grid-column: span 2; padding: 16px;">
+                                <div class="category-card-header" style="font-size: 12px; margin-bottom: 8px; padding-bottom: 6px;">💰 Entity &amp; Cost</div>
+                                <ul class="category-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                                    <li class="category-list-item" style="font-size: 11.5px;">Contractor Name</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Awarded Amount</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Winning Bid Details</li>
+                                    <li class="category-list-item" style="font-size: 11.5px;">Source of Funds</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="callout-box" style="padding: 12px 16px;">
+                            <span class="callout-icon">⚠️</span>
+                            <div class="callout-content">
+                                <h5 style="font-size: 12.5px;">Critical Validation Policies</h5>
+                                <p style="font-size: 11px;">Incomplete procurement encoding prevents construction progress reporting to ensure reporting integrity. System auto-captures encoding dates and flags illogical sequences.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="phone-gif-container">
+                            <img src="https://raw.githubusercontent.com/maiariii/insighted-infra/main/ppt2.gif" alt="Procurement Requirements">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 6: System Gateway Verification -->
+        <section class="slide-canvas" id="slide-6">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 05</span>
+                <h2 class="slide-title">System Gateway <span>Verification</span></h2>
+                <p class="slide-subtitle">The "Gate Rule" enforces strict data integrity before field reporting begins.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="split-content" style="grid-template-columns: 1fr 1.1fr;">
+                    <div>
+                        <div style="font-size: 52px; font-weight: 900; color: var(--accent-red); margin-bottom: 12px; letter-spacing: -2px;">Locked</div>
+                        <p style="font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;">
+                            The Construction module remains completely inaccessible until all mandatory procurement fields are validated chronologically.
+                        </p>
+
+                        <div class="check-list-items" style="gap: 8px;">
+                            <div class="category-list-item" style="font-size: 13px;"><strong>Logical Consistency:</strong> System checks date order (NOA &rarr; NTP &rarr; Start).</div>
+                            <div class="category-list-item" style="font-size: 13px;"><strong>Uniqueness:</strong> Prevents duplicate project registrations within the division.</div>
+                            <div class="category-list-item" style="font-size: 13px;"><strong>Financial Integrity:</strong> Ensures every project has a verifiable baseline amount.</div>
+                        </div>
+                    </div>
+
+                    <!-- Date validator interactive card -->
+                    <div class="verification-widget">
+                        <h4 style="font-size: 14px; font-weight: 800; color: var(--primary-blue); margin-bottom: 16px; text-transform: uppercase;">Interactive Validator Demo</h4>
+                        <div class="verification-header-banner locked" id="gate-demo-banner">
+                            <span style="font-size: 20px;" id="gate-demo-emoji">🔒</span>
+                            <div>
+                                <strong style="font-size: 13px; display: block;" id="gate-demo-title">Construction Tab Locked</strong>
+                                <span style="font-size: 10px;" id="gate-demo-desc">NOA must be before NTP, and NTP before Start.</span>
+                            </div>
+                        </div>
+
+                        <div class="inputs-row" style="grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="date-input-group">
+                                <span class="date-label">Notice of Award (NOA)</span>
+                                <input type="date" class="date-field" id="val-noa" value="2026-06-01" onchange="validateGateDemo()">
+                            </div>
+                            <div class="date-input-group">
+                                <span class="date-label">Notice to Proceed (NTP)</span>
+                                <input type="date" class="date-field" id="val-ntp" value="2026-05-25" onchange="validateGateDemo()">
+                            </div>
+                        </div>
+                        <div class="date-input-group" style="margin-top: 12px;">
+                            <span class="date-label">Planned Start Date</span>
+                            <input type="date" class="date-field" id="val-start" value="2026-06-10" onchange="validateGateDemo()">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 7: Phase 2: Construction Monitoring -->
+        <section class="slide-canvas" id="slide-7">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 06</span>
+                <h2 class="slide-title">Phase 2: <span>Construction Monitoring</span></h2>
+                <p class="slide-subtitle">Reporting progress using evidence and objective computation.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="staircase-flow">
+                    <div class="stair-step">
+                        <span class="stair-number">1</span>
+                        <div class="stair-text">
+                            <strong>Find Project</strong>
+                            <span>Search by school, code, or name to access project cards.</span>
+                        </div>
+                    </div>
+                    <div class="stair-step">
+                        <span class="stair-number">2</span>
+                        <div class="stair-text">
+                            <strong>Construction Update</strong>
+                            <span>Division Engineers shall assess the project completion percentage.</span>
+                        </div>
+                    </div>
+                    <div class="stair-step">
+                        <span class="stair-number">3</span>
+                        <div class="stair-text">
+                            <strong>Set Status</strong>
+                            <span>Ongoing, Suspended, or For Inspection with context remarks.</span>
+                        </div>
+                    </div>
+                    <div class="stair-step">
+                        <span class="stair-number">4</span>
+                        <div class="stair-text">
+                            <strong>Upload Proof</strong>
+                            <span>Time-stamped internal &amp; external geo-tagged photos.</span>
+                        </div>
+                    </div>
+                    <div class="stair-step">
+                        <span class="stair-number">5</span>
+                        <div class="stair-text">
+                            <strong>Objective Matrix</strong>
+                            <span>Use checklist; app calculates objective progress from matrix weights.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 8: Objective Accomplishment Matrix -->
+        <section class="slide-canvas" id="slide-8">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 07</span>
+                <h2 class="slide-title">Objective <span>Accomplishment Matrix</span></h2>
+                <p class="slide-subtitle">Progress is computed from completed work items, not purely from judgment.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="split-content" style="grid-template-columns: 1.2fr 0.8fr;">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <table class="matrix-table">
+                            <thead>
+                                <tr>
+                                    <th class="matrix-th" style="width: 50px;">Done</th>
+                                    <th class="matrix-th">Work Milestone Item</th>
+                                    <th class="matrix-th" style="width: 100px;">Weight (%)</th>
+                                    <th class="matrix-th">Validation Rule</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="matrix-tr" id="mtr-0">
+                                    <td class="matrix-td">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" onchange="tallyMatrixDemo()" data-weight="5">
+                                            <span class="checkbox-element"></span>
+                                        </label>
+                                    </td>
+                                    <td class="matrix-td"><strong>Mobilization &amp; Site Prep</strong></td>
+                                    <td class="matrix-td"><span class="weight-pill">5%</span></td>
+                                    <td class="matrix-td"><span class="rule-desc">Verified Site Setup Photo</span></td>
+                                </tr>
+                                <tr class="matrix-tr" id="mtr-1">
+                                    <td class="matrix-td">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" onchange="tallyMatrixDemo()" data-weight="15">
+                                            <span class="checkbox-element"></span>
+                                        </label>
+                                    </td>
+                                    <td class="matrix-td"><strong>Excavation &amp; Foundations</strong></td>
+                                    <td class="matrix-td"><span class="weight-pill">15%</span></td>
+                                    <td class="matrix-td"><span class="rule-desc">Depth Measurement &amp; Photo</span></td>
+                                </tr>
+                                <tr class="matrix-tr" id="mtr-2">
+                                    <td class="matrix-td">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" onchange="tallyMatrixDemo()" data-weight="20">
+                                            <span class="checkbox-element"></span>
+                                        </label>
+                                    </td>
+                                    <td class="matrix-td"><strong>Structural Framing</strong></td>
+                                    <td class="matrix-td"><span class="weight-pill">20%</span></td>
+                                    <td class="matrix-td"><span class="rule-desc">Quality Check Remarks</span></td>
+                                </tr>
+                                <tr class="matrix-tr" id="mtr-3">
+                                    <td class="matrix-td">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" onchange="tallyMatrixDemo()" data-weight="15">
+                                            <span class="checkbox-element"></span>
+                                        </label>
+                                    </td>
+                                    <td class="matrix-td"><strong>Roofing &amp; Enclosure</strong></td>
+                                    <td class="matrix-td"><span class="weight-pill">15%</span></td>
+                                    <td class="matrix-td"><span class="rule-desc">Internal + External Views</span></td>
+                                </tr>
+                                <tr class="matrix-tr" id="mtr-4">
+                                    <td class="matrix-td">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" onchange="tallyMatrixDemo()" data-weight="25">
+                                            <span class="checkbox-element"></span>
+                                        </label>
+                                    </td>
+                                    <td class="matrix-td"><strong>Masonry &amp; Electrical</strong></td>
+                                    <td class="matrix-td"><span class="weight-pill">25%</span></td>
+                                    <td class="matrix-td"><span class="rule-desc">Rough-in Clearance</span></td>
+                                </tr>
+                                <tr class="matrix-tr" id="mtr-5">
+                                    <td class="matrix-td">
+                                        <label class="checkbox-container">
+                                            <input type="checkbox" onchange="tallyMatrixDemo()" data-weight="20">
+                                            <span class="checkbox-element"></span>
+                                        </label>
+                                    </td>
+                                    <td class="matrix-td"><strong>Finishing &amp; Painting</strong></td>
+                                    <td class="matrix-td"><span class="weight-pill">20%</span></td>
+                                    <td class="matrix-td"><span class="rule-desc">Close-up of Workmanship</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div class="progress-outcome-card" style="flex-direction: row; justify-content: space-around; padding: 16px; text-align: left;">
+                            <div class="progress-circle-meter" id="circle-pct" style="width: 80px; height: 80px; font-size: 20px; margin-bottom: 0;">0%</div>
+                            <div style="flex: 1; margin-left: 20px;">
+                                <h4 style="font-size: 14px; font-weight: 800; color: var(--primary-blue);">Live Progress Estimate</h4>
+                                <p style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">Click the milestone rows to compute the total accomplishment percentage dynamically.</p>
+                                <div class="progress-meter-bar-fill" style="margin-top: 8px;">
+                                    <div class="progress-fill-line" id="circle-bar-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="phone-gif-container">
+                            <img src="https://raw.githubusercontent.com/maiariii/insighted-infra/main/ppt3.gif" alt="Accomplishment Matrix">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 9: Photo Evidence Requirements -->
+        <section class="slide-canvas" id="slide-9">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 08</span>
+                <h2 class="slide-title">Photo <span>Evidence Requirements</span></h2>
+                <p class="slide-subtitle">Every update must include visual proof for transparency and audit readiness.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="split-content" style="grid-template-columns: 1fr 1fr;">
+                    <div>
+                        <h4 style="font-size: 15px; font-weight: 800; color: var(--primary-blue); margin-bottom: 16px; text-transform: uppercase;">Minimum Set per Update</h4>
+                        <div class="check-list-items" style="gap: 12px;">
+                            <div class="category-list-item" style="font-size: 13.5px;"><strong>Division Engineer Assessment:</strong> Confirms physical milestone matches progress figures.</div>
+                            <div class="category-list-item" style="font-size: 13.5px;"><strong>External and Internal Photos:</strong> Capture views from 2-3 distinct angles.</div>
+                            <div class="category-list-item" style="font-size: 13.5px;"><strong>Checklist:</strong> Match against defined accomplishment matrix rules.</div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="phone-gif-container">
+                            <img src="https://raw.githubusercontent.com/maiariii/insighted-infra/main/ppt4.gif" alt="Photo Evidence">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <button class="nav-btn primary" onclick="nextSlide()">Next Slide ➔</button>
+            </div>
+        </section>
+
+        <!-- Slide 10: Impact & Accountability -->
+        <section class="slide-canvas" id="slide-10">
+            <div class="slide-header">
+                <span class="slide-badge">Slide 09</span>
+                <h2 class="slide-title">Impact &amp; <span>Accountability</span></h2>
+                <p class="slide-subtitle">Transforming data into trust and operational efficiency.</p>
+            </div>
+
+            <div class="slide-body">
+                <div class="metrics-row">
+                    <div class="metric-card">
+                        <span class="metric-icon">🛡️</span>
+                        <h4>Data Integrity</h4>
+                        <p>Verifiable digital history from procurement to completion. Gate Rule prevents reporting gaps.</p>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-icon">⚡</span>
+                        <h4>Operational Speed</h4>
+                        <p>Faster consolidation across divisions and reduced manual reporting follow-ups.</p>
+                    </div>
+                    <div class="metric-card">
+                        <span class="metric-icon">👤</span>
+                        <h4>Accountability</h4>
+                        <p>Clear audit trail: who updated what, when, and where. Geo-tagged proof eliminates ambiguity.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-controls">
+                <button class="nav-btn" onclick="prevSlide()">➔ Previous Slide</button>
+                <span></span>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        let currentSlideNum = 1;
+        const totalSlides = 10;
+
+        // Slide tab transitions logic
+        function loadSlide(slideNum) {
+            currentSlideNum = slideNum;
+
+            // Handle Landing Page vs Presentation mode
+            if (slideNum === 1) {
+                document.body.classList.add('landing-mode');
+            } else {
+                document.body.classList.remove('landing-mode');
+            }
+
+            // Close mobile sidebar menu on select
+            document.body.classList.remove('sidebar-open');
+
+            // Update links active states
+            const links = document.querySelectorAll('.slide-link');
+            links.forEach((link) => {
+                const match = link.getAttribute('onclick').match(/\d+/);
+                if (match && parseInt(match[0]) === slideNum) {
+                    link.classList.add('active');
+                } else {
+                    link.classList.remove('active');
+                }
+            });
+
+            // Toggle slide view canvas
+            const canvases = document.querySelectorAll('.slide-canvas');
+            canvases.forEach((canvas, idx) => {
+                if (idx + 1 === slideNum) {
+                    canvas.classList.add('active');
+                } else {
+                    canvas.classList.remove('active');
+                }
+            });
+        }
+
+        // Toggle Sidebar on mobile
+        function toggleSidebar() {
+            document.body.classList.toggle('sidebar-open');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.querySelector('.sidebar');
+            const toggleBtn = document.querySelector('.menu-toggle-btn');
+            if (document.body.classList.contains('sidebar-open') && 
+                sidebar && !sidebar.contains(e.target) && 
+                toggleBtn && !toggleBtn.contains(e.target)) {
+                document.body.classList.remove('sidebar-open');
+            }
+        });
+
+        function nextSlide() {
+            if (currentSlideNum < totalSlides) {
+                loadSlide(currentSlideNum + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlideNum > 1) {
+                loadSlide(currentSlideNum - 1);
+            }
+        }
+
+        // Slide 6 Gate validator logic
+        function validateGateDemo() {
+            const noa = new Date(document.getElementById('val-noa').value);
+            const ntp = new Date(document.getElementById('val-ntp').value);
+            const start = new Date(document.getElementById('val-start').value);
+
+            const banner = document.getElementById('gate-demo-banner');
+            const emoji = document.getElementById('gate-demo-emoji');
+            const title = document.getElementById('gate-demo-title');
+            const desc = document.getElementById('gate-demo-desc');
+
+            const isSequenceValid = (ntp > noa) && (start > ntp);
+
+            if (isSequenceValid) {
+                banner.className = "verification-header-banner unlocked";
+                emoji.innerText = "🔓";
+                title.innerText = "Gateway Verified (Passed)";
+                desc.innerText = "Timeline logical consistency checks passed successfully.";
+            } else {
+                banner.className = "verification-header-banner locked";
+                emoji.innerText = "🔒";
+                title.innerText = "Construction Tab Locked";
+                desc.innerText = "Violations found: Verify NTP date comes after NOA, and Start is after NTP.";
+            }
+        }
+
+        // Slide 8 Matrix calculator logic
+        function tallyMatrixDemo() {
+            const checkboxes = document.querySelectorAll('.matrix-table input[type="checkbox"]');
+            let sum = 0;
+            checkboxes.forEach((cb, idx) => {
+                const weight = parseInt(cb.getAttribute('data-weight'));
+                const row = document.getElementById('mtr-' + idx);
+                if (cb.checked) {
+                    sum += weight;
+                    row.classList.add('checked');
+                } else {
+                    row.classList.remove('checked');
+                }
+            });
+
+            // Update Circle Progress
+            document.getElementById('circle-pct').innerText = sum + "%";
+            document.getElementById('circle-bar-fill').style.width = sum + "%";
+            
+            // Adjust circle meter backing
+            const circle = document.getElementById('circle-pct');
+            circle.style.background = `radial-gradient(closest-side, white 79%, transparent 80% 100%), conic-gradient(var(--primary-blue) ${sum}%, var(--bg-tertiary) ${sum}%)`;
+        }
+
+        // Slide 9 Evidence Camera Simulator
+        function runPresPhotoUpload() {
+            const button = document.getElementById('pres-uploader');
+            const result = document.getElementById('pres-photo-frame');
+            button.style.display = 'none';
+            result.style.display = 'block';
+        }
+
+        // Initialize validators
+        document.addEventListener('DOMContentLoaded', () => {
+            validateGateDemo();
+        });
+    </script>
+</body>
+
+</html>
